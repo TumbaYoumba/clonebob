@@ -25,36 +25,36 @@ stages:
     - hc
 
 .image:
-  image: $CI_REGISTRY/whitespots/devsecops/security-images/toolset:latest
+  image: $CI_REGISTRY/whitespots-public/security-images/toolset:latest
 include:
   
   # Scaner versions + defectdojo url
-  - local: '.gitlab/variables.yml'
-    ref: 'dev'
+  - local: 'common/variables.yml'
+    ref: 'main'
   
   # DefectDojo preparation stage
-  - local: '.gitlab/init.yml'
-    ref: 'dev'
+  - local: 'common/init.yml'
+    ref: 'main'
 
   # Scan stages
-  - local: '.gitlab/secrets-scan.yml'
-    ref: 'dev'
-  - local: '.gitlab/code-scan.yml'
-    ref: 'dev'
-  - local: '.gitlab/image-scan.yml'
-    ref: 'dev'
-  - local: '.gitlab/dast.yml'
-    ref: 'dev'
-  - local: '.gitlab/sec-mobile.yml'
-    ref: 'dev'
-  - local: '.gitlab/sonarqube.yml'
-    ref: 'dev'
-  - local: '.gitlab/infrastructure.yml'
-    ref: 'dev'
+  - local: 'common/secrets-scan.yml'
+    ref: 'main'
+  - local: 'common/code-scan.yml'
+    ref: 'main'
+  - local: 'common/image-scan.yml'
+    ref: 'main'
+  - local: 'common/dast.yml'
+    ref: 'main'
+  - local: 'common/sec-mobile.yml'
+    ref: 'main'
+  - local: 'common/sonarqube.yml'
+    ref: 'main'
+  - local: 'common/infrastructure.yml'
+    ref: 'main'
 
   # Upload report stage
-  - local: '.gitlab/templates/.after-script-dd-upload-report.yml'
-    ref: 'dev'
+  - local: 'common/templates/.after-script-dd-upload-report.yml'
+    ref: 'main'
 
 
 

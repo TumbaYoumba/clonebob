@@ -2,8 +2,9 @@ variables:
 # COMMON VARS
     # Path to docker images : 
     # "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/trufflehog:$SEC_TRUFFLEHOG_VER"
-    SEC_PATH_TO_IMAGES: "whitespots/devsecops/security-images" 
+    SEC_PATH_TO_IMAGES: "whitespots-public/security-images" 
     SEC_DD_URL: "https://dd-demo.whitespots.io"
+    # SEC_DD_KEY: need to set in CI variables in your project settings
     DD_GROUP_BY: 'file_path' # Default value
 # SECRETS
     SEC_TRUFFLEHOG3_VER: "2.0.4" # do not update
