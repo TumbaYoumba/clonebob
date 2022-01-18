@@ -8,19 +8,16 @@
   rules:
     - if: '$SEC_SONARQUBE_ENABLE == "true"'
 
+# Needs testing in open-source version
 sast:sonarqube:
-  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/docker/sonarscanner:$SEC_SONARSCANNER_VER"
-  # image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/docker/sonarscanner-dotnet:$SEC_SONARSCANNER_DOTNET_VER"
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/sonarscanner:$SEC_SONARSCANNER_VER"
+  # image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/sonarscanner-dotnet:$SEC_SONARSCANNER_DOTNET_VER"
   variables:
     DD_SCAN_TYPE: 'Sonarqube'
     DD_REPORT_FILE_NAME: 'sonarqube.json'
     DD_GROUP_BY: 'file_path'
   script:
     - | 
-      set -x
-      ls -la
-      pwd
-      which sonar-scanner
       sonar-scanner \
         -Dsonar.projectKey=$CI_PROJECT_PATH_SLUG \
         -Dsonar.sources=. \
