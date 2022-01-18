@@ -1,7 +1,5 @@
 .for_sonarqube:
   stage: code-scan
-  before_script:
-    - env
   extends:
     - .allow_failure
     - .tags
