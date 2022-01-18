@@ -1,0 +1,192 @@
+# SETTINGS
+
+# For all stages below
+.for_code_scan:
+  stage: code-scan
+  extends:
+    - .dd-upload-report
+    - .needs_init
+    - .allow_failure
+    - .tags
+
+# Only for mobile scanners, that scan code
+.mobile_sast:
+  rules:
+    - if: '$SEC_MOBILE_ENABLE == "true"'
+
+# For sast and code-related scanners
+.sast:
+  rules:
+    - if: '$SEC_SAST_ENABLE == "true"'
+
+
+# INFRA
+
+scan:hadolint:
+  variables:
+    DD_SCAN_TYPE: 'Hadolint Dockerfile check'
+    DD_REPORT_FILE_NAME: 'hadolint.json'
+    DD_GROUP_BY: 'file_path'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/hadolint:$SEC_HADOLINT_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    # - find `pwd` -name "Dockerfile" -type f -exec /bin/hadolint {} \;
+    - hadolint -f json ./$SEC_CODE_FOLDER/Dockerfile > $DD_REPORT_FILE_NAME || true
+  extends: 
+    - .for_code_scan
+  rules:
+    - if: '$SEC_DOCKER == "true"'
+
+# SAST
+
+sast:py:bandit:
+  variables:
+    DD_SCAN_TYPE: 'Bandit Scan'
+    DD_REPORT_FILE_NAME: 'bandit.json'
+    DD_GROUP_BY: 'file_path'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/bandit:$SEC_BANDIT_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - bandit -ll -ii -r ./$SEC_CODE_FOLDER -f json -o $DD_REPORT_FILE_NAME || true
+  extends: 
+    - .for_code_scan
+    - .sast
+  rules:
+    - if: '$SEC_PYTHON == "true"'
+
+sast:php:phpcs-security-audit:
+  variables:
+    DD_SCAN_TYPE: 'PHP Security Audit v2'
+    DD_REPORT_FILE_NAME: 'phpcs.json'
+    SEC_PHPCS_STANDARD: '/tmp/vendor/pheromone/phpcs-security-audit/example_base_ruleset.xml'
+    DD_GROUP_BY: 'file_path'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/phpcs-security-audit:$SEC_PHPCS_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - /tmp/vendor/bin/phpcs --extensions=php,inc,lib,module,info --standard=$SEC_PHPCS_STANDARD  --report=json --report-file=$DD_REPORT_FILE_NAME ./$SEC_CODE_FOLDER || true
+  extends: 
+    - .for_code_scan 
+    - .sast
+  rules:
+    - if: '$SEC_PHP == "true"'
+
+sast:go:gosec:
+  variables:
+    DD_SCAN_TYPE: 'Gosec Scanner'
+    DD_REPORT_FILE_NAME: 'gosec.json'
+    DD_GROUP_BY: 'file_path'
+    SEC_GOSEC_MINIMUM_SEVERITY: 'low'
+    SEC_GOSEC_EXCLUDE: 'G102,G103,G104,G307'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/gosec:$SEC_GOSEC_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - gosec -fmt json -out $DD_REPORT_FILE_NAME -exclude=$SEC_GOSEC_EXCLUDE -severity=$SEC_GOSEC_MINIMUM_SEVERITY ./$SEC_CODE_FOLDER || true
+    # G102: Bind to all interfaces
+    # G103: Audit the use of unsafe block
+    # G104: Audit errors not checked
+    # G307: Deferring a method which returns an error
+  extends: 
+    - .for_code_scan 
+    - .sast
+  rules:
+    - if: '$SEC_GOLANG == "true"'
+
+sast:js:retirejs:
+  variables:
+    DD_SCAN_TYPE: 'Retire.js Scan'
+    DD_REPORT_FILE_NAME: 'retirejs.json'
+    DD_GROUP_BY: 'file_path'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/retirejs:$SEC_RETIREJS_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - retire --outputformat json --outputpath $DD_REPORT_FILE_NAME --path ./$SEC_CODE_FOLDER  || true
+  extends: 
+    - .for_code_scan 
+    - .sast
+  rules:
+    - if: '$SEC_JS == "true"'
+
+sast:js:eslint:
+  variables:
+    DD_SCAN_TYPE: 'ESLint Scan'
+    DD_REPORT_FILE_NAME: 'eslint.json'
+    DD_GROUP_BY: 'file_path'
+    SEC_ESLINT_CONFIG_PATH: '/eslint/eslintrc-light.js'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/eslint:$SEC_ESLINT_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - eslint -c $SEC_ESLINT_CONFIG_PATH -o $DD_REPORT_FILE_NAME -f json ./$SEC_CODE_FOLDER || true
+  extends: 
+    - .for_code_scan 
+    - .sast
+  rules:
+    - if: '$SEC_JS == "true"'
+
+sast:ruby:brakeman:
+  variables:
+    DD_SCAN_TYPE: 'Brakeman Scan'
+    DD_REPORT_FILE_NAME: 'brakeman.json'
+    DD_GROUP_BY: 'file_path'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/brakeman:$SEC_BRAKEMAN_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - brakeman -o $DD_REPORT_FILE_NAME ./$SEC_CODE_FOLDER || true
+  extends: 
+    - .for_code_scan 
+    - .sast
+  rules:
+    - if: '$SEC_RUBY == "true"'
+
+
+sast:grep:semgrep:
+  variables:
+    DD_SCAN_TYPE: 'Semgrep JSON Report'
+    DD_REPORT_FILE_NAME: 'semgrep.json'
+    DD_GROUP_BY: 'file_path'
+    SEC_SEMGREP_CONFIG: 'p/ci'
+    SEC_SEMGREP_EXCLUDE: '/tests'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/semgrep:$SEC_SEMGREP_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - semgrep --config $SEC_SEMGREP_CONFIG --exclude=$SEC_SEMGREP_EXCLUDE --json ./$SEC_CODE_FOLDER > $DD_REPORT_FILE_NAME || true
+  extends: 
+    - .for_code_scan 
+    - .sast
+  rules:
+    - if: '$SEC_GREP == "true"'
+
+
+# Mobile SAST
+
+sast:mobile:mobsfscan:
+  variables:
+    DD_SCAN_TYPE: 'Mobsfscan Scan'
+    DD_REPORT_FILE_NAME: 'mobsfscan.json'
+    DD_GROUP_BY: 'file_path'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/mobsfscan:$SEC_MOBSFSCAN_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - mobsfscan ./$SEC_CODE_FOLDER --json > $DD_REPORT_FILE_NAME || true
+  extends: 
+    - .mobile_sast
+    - .for_code_scan
+
+
+# Code dependencies
+
+dep-scan:trivy:
+  variables:
+    DD_SCAN_TYPE: 'Trivy Scan'
+    DD_REPORT_FILE_NAME: 'trivy-code.json'
+    DD_GROUP_BY: 'component_name'
+    IMAGE_TO_SCAN: "$CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME"
+    SEC_TRIVY_MINIMUM_SEVERITY: 'HIGH,CRITICAL'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/trivy:$SEC_TRIVY_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - trivy fs --output $DD_REPORT_FILE_NAME --format json --no-progress --severity $SEC_TRIVY_MINIMUM_SEVERITY ./$SEC_CODE_FOLDER || true
+  extends: 
+    - .for_code_scan
+    - .sast
+  rules:
+    - if: '$SEC_PYTHON == "true" || $SEC_RUBY == "true" || $SEC_PHP == "true" || $SEC_JS == "true"'

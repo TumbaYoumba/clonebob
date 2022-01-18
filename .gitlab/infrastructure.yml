@@ -1,0 +1,50 @@
+.for_infra_scan:
+  extends:
+    - .needs_init
+    - .allow_failure
+    - .tags
+
+.needs_subdomains_detect:
+  needs: 
+    - job: subdomains-detect
+      artifacts: true
+
+subdomains-detect:
+  stage: subdomains-detect
+  extends: 
+    - .for_infra_scan
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/subfinder:$SEC_SUBFINDER_VER"
+  variables:
+    SEC_INFRA_DOMAIN: example.com
+  script:
+    - subfinder -d $SEC_INFRA_DOMAIN -recursive -o domains.txt
+    - sed 's/^/http\:\/\//' domains.txt > urls.txt
+    - ls
+  rules:
+    - if: '$SEC_INFRA_ENABLE == "true"'
+  artifacts:
+    paths:
+    - urls.txt
+    when: always
+
+
+subdomains-scan:
+  stage: subdomains-scan
+  extends: 
+    - .dd-upload-report
+    - .for_infra_scan
+    - .needs_subdomains_detect
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/nuclei:$SEC_NUCLEI_VER"
+  variables:
+    DD_SCAN_TYPE: 'SARIF'
+    DD_REPORT_FILE_NAME: 'report.sarif'
+    DD_GROUP_BY: 'component_name'
+    SEC_NUCLEI_TEMPLATES: '-t exposures -t exposed-panels'
+  script:
+    - nuclei -l urls.txt -json -o $DD_REPORT_FILE_NAME $SEC_NUCLEI_TEMPLATES || true
+  rules:
+    - if: '$SEC_INFRA_ENABLE == "true"'
+  artifacts:
+    paths:
+    - $DD_REPORT_FILE_NAME
+    when: always

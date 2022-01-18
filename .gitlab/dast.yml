@@ -1,0 +1,23 @@
+.dast_rules:
+  rules:
+    - if: '$SEC_DAST_ENABLE == "true"'
+
+dast:arachni:
+  stage: dast
+  variables:
+    DD_SCAN_TYPE: 'Arachni Scan'
+    DD_REPORT_FILE_NAME: 'arachni.json'
+    DD_GROUP_BY: 'component_name'
+    SEC_ARACHNI_ADDITIONAL_FLAGS: ''
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/arachni:$SEC_ARACHNI_VER"
+  script:
+    - echo "Scanning service with ${CI_REGISTRY_IMAGE}"
+    - arachni --output-verbose --scope-include-subdomains $SEC_DAST_URL_TO_SCAN $SEC_ARACHNI_ADDITIONAL_FLAGS --report-save-path=arachni.afr
+    # arachni_rpc --dispatcher-url arachni-dispatcher:2222 --scope-include-subdomains --report-save-path=arachni.afr $SEC_DAST_URL_TO_SCAN
+    - arachni_reporter arachni.afr --reporter=json:outfile=$DD_REPORT_FILE_NAME || true
+  extends: 
+    - .allow_failure
+    - .tags
+    - .needs_init
+    - .dast_rules
+    - .dd-upload-report

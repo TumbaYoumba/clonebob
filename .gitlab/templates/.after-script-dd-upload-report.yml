@@ -1,0 +1,32 @@
+# need vars
+# DD_URL
+# DD_KEY
+# DD_REPORT_FILE_NAME
+# DD_SCAN_TYPE
+# DD_ENGAGEMENT_ID
+# DD_GROUP_BY file_path
+
+.dd-upload-report:
+  after_script:
+    - |
+      set -x
+      echo "Uploading report with /.after-script-template-dd-upload-report.yml"
+      ls -la
+      export $(xargs < variables.env)
+      curl -s -D - --insecure -X POST "$SEC_DD_URL/api/v2/import-scan/" \
+        -H "accept: application/json" \
+        -H "Content-Type: multipart/form-data" \
+        -H "Authorization: Token $SEC_DD_KEY"  \
+        -F "file=@./$DD_REPORT_FILE_NAME" \
+        -F "scan_type=$DD_SCAN_TYPE" \
+        -F "engagement=$DD_ENGAGEMENT_ID" \
+        -F "active=true" \
+        -F "verified=false" \
+        -F "group_by=$DD_GROUP_BY" \
+        -F "close_old_findings=false" \
+        -F "scan_date=$(date +%F)" || true
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+    - $DD_REPORT_FILE_NAME
+    when: always

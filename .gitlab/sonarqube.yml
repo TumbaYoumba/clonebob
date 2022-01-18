@@ -1,0 +1,34 @@
+.for_sonarqube:
+  stage: code-scan
+  before_script:
+    - env
+  extends:
+    - .allow_failure
+    - .tags
+  rules:
+    - if: '$SEC_SONARQUBE_ENABLE == "true"'
+
+sast:sonarqube:
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/docker/sonarscanner:$SEC_SONARSCANNER_VER"
+  # image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/docker/sonarscanner-dotnet:$SEC_SONARSCANNER_DOTNET_VER"
+  variables:
+    DD_SCAN_TYPE: 'Sonarqube'
+    DD_REPORT_FILE_NAME: 'sonarqube.json'
+    DD_GROUP_BY: 'file_path'
+  script:
+    - | 
+      set -x
+      ls -la
+      pwd
+      which sonar-scanner
+      sonar-scanner \
+        -Dsonar.projectKey=$CI_PROJECT_PATH_SLUG \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=$SEC_SONARQUBE_URL  \
+        -Dsonar.login=$SEC_SONARQUBE_TOKEN
+  extends: .for_sonarqube
+
+    
+
+
+

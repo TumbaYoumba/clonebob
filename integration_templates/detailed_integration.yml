@@ -1,16 +1,3 @@
-# Step-by-step guide on setup
-
-1. Make a shared group to make include pipelines works (`devsecops` here)
-2. Create a project in that group (`pipelines` here)
-3. Git push this content to your project
-4. Edit `.gitlab/variables.yml` file with proper urls in `SEC_DD_URL` and `SEC_MOBILE_MOBSF_URL` (if you want to use an external mobsf). 
-5. You need to edit the `SEC_PATH_TO_IMAGES` variable in `.gitlab/variables.yml` (it's just a project path to security images project).
-6. And the same value should be written in `pipelines.yml` file to set `.image` include directive properly
-(image: $CI_REGISTRY/whitespots/devsecops/security-images/toolset:latest)
-7. Now you can use the following example:
-
-
-```yml
 stages: 
   # after build stage
   - security
@@ -33,12 +20,17 @@ security:
     # SAST settings
     SEC_SAST_ENABLE: "true"
     SEC_GREP: "true"
-    SEC_SEMGREP_CONFIG: "p/ci"
+    SEC_SEMGREP_CONFIG: 'p/ci'
+    SEC_SEMGREP_EXCLUDE: '/tests'
     SEC_PYTHON: "true"
     SEC_RUBY: "false"
     SEC_PHP: "false"
+    SEC_PHPCS_STANDARD: '/tmp/vendor/pheromone/phpcs-security-audit/example_base_ruleset.xml'
     SEC_JS: "true"
+    SEC_ESLINT_CONFIG_PATH: '/eslint/eslintrc-light.js'
     SEC_GOLANG: "false"
+    SEC_GOSEC_MINIMUM_SEVERITY: 'low'
+    SEC_GOSEC_EXCLUDE: 'G102,G103,G104,G307'
     
     # Dependency check settings
     SEC_IMAGE_SCAN_ENABLE: "true"
@@ -47,10 +39,14 @@ security:
     SEC_IMAGE_REGISTRY_URL: ${CI_REGISTRY}
     SEC_IMAGE_REGISTRY_USER: ${CI_REGISTRY_USER}
     SEC_IMAGE_REGISTRY_PASS: ${CI_REGISTRY_PASSWORD}
+    SEC_IMAGE_REGISTRY_TOKEN: ${CI_BUILD_TOKEN}
+    IMAGE_TO_SCAN: "$CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME"
+    SEC_TRIVY_MINIMUM_SEVERITY: 'HIGH,CRITICAL'
 
     # DAST settings
     SEC_DAST_ENABLE: "true"
     SEC_DAST_URL_TO_SCAN: "https://example.com"
+    SEC_ARACHNI_ADDITIONAL_FLAGS: ''
 
     # Mobile settings
     SEC_MOBILE_ENABLE: "false"
@@ -63,6 +59,7 @@ security:
     # Infrastructure scanners
     SEC_INFRA_ENABLE: "false"
     SEC_INFRA_DOMAIN: "exxxxample.com"
+    SEC_NUCLEI_TEMPLATES: '-t exposures -t exposed-panels'
 
     # SAST (csharp) settings
     SEC_SONARQUBE_ENABLE: "false"
@@ -72,16 +69,3 @@ security:
     SEC_SONARQUBE_TOKEN: "token"
     SEC_SONARQUBE_PATH_TO_SLN: "token" # <- put in CI/CD variables for security reasons
     
-
-```
-
-
-
-# Add new scanner
-
-1. Put scanner version to `.gitlab/variables.yml` (**pipelines** repo)
-2. Add Dockerfile to folder in (**security-images** repo)
-3. Add job to gitlab-ci.yml (**security-images** repo)
-4. Add job with scan script in .gitlab folder (**pipelines** repo)
-5. Configure default variables in `.gitlab/variables.yml` (**pipelines** repo)
-6. Check all

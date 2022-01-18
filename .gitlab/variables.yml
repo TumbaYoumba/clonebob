@@ -1,0 +1,38 @@
+variables:
+# COMMON VARS
+    # Path to docker images : 
+    # "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/trufflehog:$SEC_TRUFFLEHOG_VER"
+    SEC_PATH_TO_IMAGES: "whitespots/devsecops/security-images" 
+    SEC_DD_URL: "https://dd-demo.whitespots.io"
+    DD_GROUP_BY: 'file_path' # Default value
+# SECRETS
+    SEC_TRUFFLEHOG3_VER: "2.0.4" # do not update
+    SEC_GITLEAKS_VER: "7.2.2"
+# SAST
+    SEC_BANDIT_VER: "1.7.0"
+    SEC_PHPCS_VER: "2.0.1"
+    SEC_GOSEC_VER: "2.9.1"
+    SEC_RETIREJS_VER: "2.2.4"
+    SEC_ESLINT_VER: "7.20.0"
+    SEC_BRAKEMAN_VER: "5.0.0"
+    SEC_HADOLINT_VER: "1.22.1"
+    SEC_GIXY_VER: "0.1.20"
+    SEC_SEMGREP_VER: "0.71.0"
+# DEP CHECK
+    SEC_TRIVY_VER: "0.20.2"
+    SEC_GRYPE_VER: "0.24.0"
+    SEC_IMAGE_TO_SCAN: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}"
+# DAST
+    SEC_ARACHNI_VER: "1.5.1"    
+    SEC_ZAP_VER: ""
+# MOBILE
+    SEC_MOBSFSCAN_VER: "0.0.8"
+    SEC_CHECKKARLMARX_VER: "1.0.2"
+    SEC_MOBILE_MOBSF_URL: "http://mobsf.demo.whitespots.io"
+    # SEC_MOBILE_MOBSF_TOKEN: 
+# SONAR
+    SEC_SONARSCANNER_VER: "4.6"
+    SEC_SONARSCANNER_DOTNET_VER: "5.0.4"
+# INFRA
+    SEC_SUBFINDER_VER: "2.4.8"
+    SEC_NUCLEI_VER: "2.5.1"
