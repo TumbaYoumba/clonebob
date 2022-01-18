@@ -8,9 +8,9 @@ security:
   trigger:
     include:
     # Path to the shared repo
-      - project: 'whitespots/devsecops/pipelines'
+      - project: 'whitespots-public/pipelines'
         # a proper branch name
-        ref: 'master'
+        ref: 'main'
         file: 'pipelines.yml'
   variables:
 
