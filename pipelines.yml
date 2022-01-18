@@ -22,7 +22,7 @@ stages:
 # Runner tags. Dev repositories should have access to them
 .tags:
   tags:
-    - hc
+    - gitlab-org
 
 .image:
   image: $CI_REGISTRY/whitespots-public/security-images/toolset:latest
