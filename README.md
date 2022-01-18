@@ -1,12 +1,12 @@
 # Step-by-step guide on setup
 
-1. Make a shared group to make include pipelines works (`devsecops` here)
+1. Make a shared group in your corporate gitlab
 2. Create a project in that group (`pipelines` here)
 3. Git push this content to your project
-4. Edit `.gitlab/variables.yml` file with proper urls in `SEC_DD_URL` and `SEC_MOBILE_MOBSF_URL` (if you want to use an external mobsf). 
-5. You need to edit the `SEC_PATH_TO_IMAGES` variable in `.gitlab/variables.yml` (it's just a project path to security images project).
+4. Edit `common/variables.yml` file with proper urls in `SEC_DD_URL` and `SEC_MOBILE_MOBSF_URL` (if you want to use an external mobsf). 
+5. You need to edit the `SEC_PATH_TO_IMAGES` variable in `common/variables.yml` (it's just a project path to security images project).
 6. And the same value should be written in `pipelines.yml` file to set `.image` include directive properly
-(image: $CI_REGISTRY/whitespots/devsecops/security-images/toolset:latest)
+(image: $CI_REGISTRY/whitespots-public/security-images/toolset:latest)
 7. Now you can use the following example:
 
 
@@ -79,9 +79,9 @@ security:
 
 # Add new scanner
 
-1. Put scanner version to `.gitlab/variables.yml` (**pipelines** repo)
+1. Put scanner version to `common/variables.yml` (**pipelines** repo)
 2. Add Dockerfile to folder in (**security-images** repo)
 3. Add job to gitlab-ci.yml (**security-images** repo)
 4. Add job with scan script in .gitlab folder (**pipelines** repo)
-5. Configure default variables in `.gitlab/variables.yml` (**pipelines** repo)
+5. Configure default variables in `common/variables.yml` (**pipelines** repo)
 6. Check all
