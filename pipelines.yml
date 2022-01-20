@@ -22,8 +22,8 @@ stages:
 # Runner tags. Dev repositories should have access to them
 .tags:
   tags:
-    - help_security
-    # public runners - gitlab-org
+    # public runners 
+    - gitlab-org
 
 .image:
   image: $CI_REGISTRY/whitespots-public/security-images/toolset:latest
