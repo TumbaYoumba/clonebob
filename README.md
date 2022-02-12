@@ -5,9 +5,10 @@
 3. Git push this content to your project
 4. Edit `common/variables.yml` file with proper urls in `SEC_DD_URL` and `SEC_MOBILE_MOBSF_URL` (if you want to use an external mobsf). 
 5. You need to edit the `SEC_PATH_TO_IMAGES` variable in `common/variables.yml` (it's just a project path to security images project).
-6. And the same value should be written in `pipelines.yml` file to set `.image` include directive properly
+6. And the same value should be written in `pipelines.yml` file to set `.image` include directive properly (We will remove this step later)
 (image: $CI_REGISTRY/whitespots-public/security-images/toolset:latest)
-7. Now you can use the following example:
+7. Set `SEC_DD_KEY` in your project group. (get this token from your DefectDojo instance)
+8. Now you can use the following example:
 
 
 ```yml
