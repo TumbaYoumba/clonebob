@@ -21,3 +21,69 @@ dast:arachni:
     - .needs_init
     - .dast_rules
     - .dd-upload-report
+    
+
+# All scan stages should wait for zap preparation stage
+.needs_init_and_qa_tests:
+  needs:
+    - job: api-tests-prepare
+      artifacts: true
+
+api-tests-prepare:
+  stage: api-tests-prepare
+  extends:
+    - .allow_failure
+    - .tags
+    - .needs_init
+    - .dast_rules
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/toolset:latest"
+  script:
+    - |
+        git config --global url."git@bitbucket.example.com:".insteadOf "https://bitbucket.example.com/"
+        # If you are clonning from insecure SCM
+        # git config --global core.sshCommand '-o StrictHostKeyChecking=no'
+
+        mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
+        echo "$SSH_PRIVATE" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 400 ~/.ssh/id_rsa
+        eval "$(ssh-agent -s)"
+        export SSH_PRIVATE=""
+        ssh-add ~/.ssh/id_rsa
+        echo -e "Host *\n\tPubkeyAcceptedKeyTypes +ssh-rsa \n\n" > ~/.ssh/config
+        ssh-keyscan -p 2222 -H bitbucket.example.com >> ~/.ssh/known_hosts
+        
+        git clone ssh://git@bitbucket.example.com:2222/qa/tests-framework.git code # here we should hardcode the qa repo url
+        ls code
+        mv code/* . && rm -rf code
+
+  artifacts:
+    paths:
+      - ./
+
+api-tests-run:
+  stage: api-tests-run
+  extends:
+    - .tags
+    - .needs_init_and_qa_tests
+    - .allow_failure
+    - .dast_rules
+    - .dd-upload-report
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/zap:$SEC_ZAP_VER"
+  variables:
+      ZAP_API_KEY: "$ZAP_API_KEY"
+      HOST_PATTERN: "example.com"
+      SCAN_URL_SCHEME: "http"
+      QA_AUTOTESTS_NAME: "main"
+      QA_AUTOTESTS_PROXY_FOR_DEBUG: "zap 8080"
+      DD_SCAN_TYPE: 'ZAP Scan'
+      DD_REPORT_FILE_NAME: 'zap_report.xml'
+  services:
+    - name: owasp/zap2docker-bare:$SEC_ZAP_VER
+      alias: zap
+      command: ["java", "-Xmx2048m", "-jar", "/zap/zap-$SEC_ZAP_VER.jar", "-daemon", "-host", "0.0.0.0", "-port", "8080", "-config", "api.disablekey=true", "-config", "api.addrs.addr.name=.*", "-config", "api.addrs.addr.regex=true"]
+
+  script:
+    - pip3 install -r requirements.txt
+    #- pytest services/$QA_AUTOTESTS_NAME || true
+    - curl --insecure -x http://zap:8080 -I http://$HOST_PATTERN
+    - python zap_scan.py
