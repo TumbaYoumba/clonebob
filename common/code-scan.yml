@@ -160,7 +160,7 @@ sast:java:spotbugs:
     DD_SCAN_TYPE: 'SpotBugs Scan'
     DD_REPORT_FILE_NAME: 'spotbugs.json'
     #CI_PROJECT_DIR: $SEC_CODE_FOLDER # FOR non-gitlab scm
-  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/spotbugs:latest"
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/spotbugs:$SEC_SPOTBUGS_VER"
   script:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
     - ls /
