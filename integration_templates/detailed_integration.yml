@@ -27,6 +27,7 @@ security:
     SEC_PHP: "false"
     SEC_PHPCS_STANDARD: '/tmp/vendor/pheromone/phpcs-security-audit/example_base_ruleset.xml'
     SEC_JS: "true"
+    SEC_JAVA: "true"
     SEC_ESLINT_CONFIG_PATH: '/eslint/eslintrc-light.js'
     SEC_GOLANG: "false"
     SEC_GOSEC_MINIMUM_SEVERITY: 'low'

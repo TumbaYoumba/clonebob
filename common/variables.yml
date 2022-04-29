@@ -19,6 +19,7 @@ variables:
     SEC_HADOLINT_VER: "1.22.1"
     SEC_GIXY_VER: "0.1.20"
     SEC_SEMGREP_VER: "0.71.0"
+    SEC_SPOTBUGS_VER: "2.15.2"
 # DEP CHECK
     SEC_TRIVY_VER: "0.20.2"
     SEC_GRYPE_VER: "0.24.0"

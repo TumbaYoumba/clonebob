@@ -155,6 +155,22 @@ sast:grep:semgrep:
   rules:
     - if: '$SEC_GREP == "true"'
 
+sast:java:spotbugs:
+  variables:
+    DD_SCAN_TYPE: 'SpotBugs Scan'
+    DD_REPORT_FILE_NAME: 'spotbugs.json'
+    #CI_PROJECT_DIR: $SEC_CODE_FOLDER # FOR non-gitlab scm
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/spotbugs:latest"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - ls /
+    - /analyzer run > $DD_REPORT_FILE_NAME
+  extends: 
+    - .for_code_scan 
+    - .sast
+  rules:
+    - if: '$SEC_JAVA == "true"'
+
 
 # Mobile SAST
 
