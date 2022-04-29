@@ -100,7 +100,7 @@ sast:js:retirejs:
   script:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
     # Fix dependencies
-    - npm install || true
+    - npm install -g --save-dev --no-cache || true
     - retire --outputformat json --outputpath $DD_REPORT_FILE_NAME --path ./$SEC_CODE_FOLDER  || true
   extends: 
     - .for_code_scan 
