@@ -100,7 +100,8 @@ sast:js:retirejs:
   script:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
     # Fix dependencies by using npm install two times. Yes, this is how it works sometimes...
-    - npm install || true
+    # Just uncomment if required
+    # - npm install || true
     - npm install || true
     - retire --outputformat json --outputpath $DD_REPORT_FILE_NAME --path ./$SEC_CODE_FOLDER  || true
   extends: 
