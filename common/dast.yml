@@ -71,7 +71,7 @@ api-tests-run:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/zap:$SEC_ZAP_VER"
   variables:
       ZAP_API_KEY: "$ZAP_API_KEY"
-      HOST_PATTERN: "example.com"
+      HOST_PATTERN: "$SEC_DAST_URL_TO_SCAN"
       SCAN_URL_SCHEME: "http"
       QA_AUTOTESTS_NAME: "main"
       QA_AUTOTESTS_PROXY_FOR_DEBUG: "zap 8080"
@@ -84,6 +84,7 @@ api-tests-run:
 
   script:
     - pip3 install -r requirements.txt
-    #- pytest services/$QA_AUTOTESTS_NAME || true
+    # Here you need to describe how to run your QA framework, that was cloned previously
+    # - pytest services/$QA_AUTOTESTS_NAME || true
     - curl --insecure -x http://zap:8080 -I http://$HOST_PATTERN
     - python zap_scan.py

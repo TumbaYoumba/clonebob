@@ -48,6 +48,8 @@ security:
     SEC_DAST_ENABLE: "true"
     SEC_DAST_URL_TO_SCAN: "https://example.com"
     SEC_ARACHNI_ADDITIONAL_FLAGS: ''
+    # For API tests via OWASP ZAP
+    QA_AUTOTESTS_NAME: "main"
 
     # Mobile settings
     SEC_MOBILE_ENABLE: "false"
