@@ -161,7 +161,7 @@ sast:grep:semgrep:
 
 sast:java:spotbugs:
   variables:
-    DD_SCAN_TYPE: 'SpotBugs Scan'
+    DD_SCAN_TYPE: 'GitLab SAST Report'
     # This scanner has it's own report creation logic: https://gitlab.com/gitlab-org/security-products/analyzers/common#how-to-use-the-analyzers
     DD_REPORT_FILE_NAME: 'gl-sast-report.json' 
     #CI_PROJECT_DIR: $SEC_CODE_FOLDER # FOR non-gitlab scm
