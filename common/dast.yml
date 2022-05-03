@@ -37,12 +37,13 @@ api-tests-prepare:
     - .needs_init
     - .dast_rules
   variables:
-    SEC_ZAP_AUTOTESTS_GIT_HOST: "bitbucket.example.com"
+    SEC_ZAP_AUTOTESTS_GIT_SSH_HOST: "bitbucket.example.com"
     SEC_ZAP_AUTOTESTS_GIT_SSH_PORT: "22"
+    SEC_ZAP_AUTOTESTS_GIT_REPO_URL: "ssh://git@bitbucket.example.com/qa/tests-framework.git"
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/toolset:latest"
   script:
     - |
-        git config --global url."git@$SEC_ZAP_AUTOTESTS_GIT_HOST:".insteadOf "https://$SEC_ZAP_AUTOTESTS_GIT_HOST/"
+        git config --global url."git@$SEC_ZAP_AUTOTESTS_GIT_SSH_HOST:".insteadOf "https://$SEC_ZAP_AUTOTESTS_GIT_SSH_HOST/"
         # If you are clonning from insecure SCM
         # git config --global core.sshCommand '-o StrictHostKeyChecking=no'
 
@@ -53,9 +54,9 @@ api-tests-prepare:
         export SSH_PRIVATE=""
         ssh-add ~/.ssh/id_rsa
         echo -e "Host *\n\tPubkeyAcceptedKeyTypes +ssh-rsa \n\n" > ~/.ssh/config
-        ssh-keyscan -p $SEC_ZAP_AUTOTESTS_GIT_SSH_PORT -H $SEC_ZAP_AUTOTESTS_GIT_HOST >> ~/.ssh/known_hosts
+        ssh-keyscan -p $SEC_ZAP_AUTOTESTS_GIT_SSH_PORT -H $SEC_ZAP_AUTOTESTS_GIT_SSH_HOST >> ~/.ssh/known_hosts
         
-        git clone ssh://git@$SEC_ZAP_AUTOTESTS_GIT_HOST:$SEC_ZAP_AUTOTESTS_GIT_SSH_PORT/qa/tests-framework.git code # here we should hardcode the qa repo url
+        git clone $SEC_ZAP_AUTOTESTS_GIT_REPO_URL code # here we should hardcode the qa repo url
         ls code
         mv code/* . && rm -rf code
 
