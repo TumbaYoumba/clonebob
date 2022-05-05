@@ -165,6 +165,7 @@ sast:java:spotbugs:
     # This scanner has it's own report creation logic: https://gitlab.com/gitlab-org/security-products/analyzers/common#how-to-use-the-analyzers
     DD_REPORT_FILE_NAME: 'gl-sast-report.json' 
     #CI_PROJECT_DIR: $SEC_CODE_FOLDER # FOR non-gitlab scm
+    SECURE_LOG_LEVEL: "debug"
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/spotbugs:$SEC_SPOTBUGS_VER"
   script:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
