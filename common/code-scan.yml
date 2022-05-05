@@ -168,7 +168,7 @@ sast:java:spotbugs:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/spotbugs:$SEC_SPOTBUGS_VER"
   script:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
-    - /analyzer run
+    - /analyzer run || true
   extends: 
     - .for_code_scan 
     - .sast
