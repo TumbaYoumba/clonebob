@@ -141,7 +141,24 @@ sast:ruby:brakeman:
   rules:
     - if: '$SEC_RUBY == "true"'
 
+sast:java:spotbugs:
+  variables:
+    DD_SCAN_TYPE: 'GitLab SAST Report'
+    # This scanner has it's own report creation logic: https://gitlab.com/gitlab-org/security-products/analyzers/common#how-to-use-the-analyzers
+    DD_REPORT_FILE_NAME: 'gl-sast-report.json' 
+    #CI_PROJECT_DIR: $SEC_CODE_FOLDER # FOR non-gitlab scm
+    SECURE_LOG_LEVEL: "debug"
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/spotbugs:$SEC_SPOTBUGS_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - /analyzer run || true
+  extends: 
+    - .for_code_scan 
+    - .sast
+  rules:
+    - if: '$SEC_JAVA == "true"'
 
+# Other languages/technologies
 sast:grep:semgrep:
   variables:
     DD_SCAN_TYPE: 'Semgrep JSON Report'
@@ -159,22 +176,20 @@ sast:grep:semgrep:
   rules:
     - if: '$SEC_GREP == "true"'
 
-sast:java:spotbugs:
+
+sast:grep:terrascan:
   variables:
-    DD_SCAN_TYPE: 'GitLab SAST Report'
-    # This scanner has it's own report creation logic: https://gitlab.com/gitlab-org/security-products/analyzers/common#how-to-use-the-analyzers
-    DD_REPORT_FILE_NAME: 'gl-sast-report.json' 
-    #CI_PROJECT_DIR: $SEC_CODE_FOLDER # FOR non-gitlab scm
-    SECURE_LOG_LEVEL: "debug"
-  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/spotbugs:$SEC_SPOTBUGS_VER"
+    DD_SCAN_TYPE: 'Terrascan Scan'
+    DD_REPORT_FILE_NAME: 'terrascan.json'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/terrascan:$SEC_TERRASCAN_VER"
   script:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
-    - /analyzer run || true
+    - terrascan scan ./$SEC_CODE_FOLDER > $DD_REPORT_FILE_NAME || true
   extends: 
     - .for_code_scan 
     - .sast
   rules:
-    - if: '$SEC_JAVA == "true"'
+    - if: '$SEC_DOCKER == "true"'
 
 
 # Mobile SAST
