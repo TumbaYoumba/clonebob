@@ -21,11 +21,67 @@
 
 # Language rules
 
+.docker_rules:
+  rules:
+    - if: '$SEC_DOCKER == "true"'
+    - exists:
+      - '**/Dockerfile'
+
+.golang_rules:
+  rules:
+    - if: '$SEC_GO == "true"'
+    - exists:
+      - '**/*.go'
+
+.grep_rules:
+  rules:
+    - if: '$SEC_GREP == "true"'
+    - exists:
+      - '**/*.go'
+      - '**/*.php'
+      - '**/*.java'
+      - '**/*.js'
+      - '**/*.py'
+
+.iac_rules:
+  rules:
+    - if: '$SEC_IAC == "true"'
+    - exists:
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.tf'
+
+.js_rules:
+  rules:
+    - if: '$SEC_JS == "true"'
+    - exists:
+      - '**/*.js'
+
+.java_rules:
+  rules:
+    - if: '$SEC_JAVA == "true"'
+    - exists:
+      - '**/*.java'
+
 .python_rules:
   rules:
     - if: '$SEC_PYTHON == "true"'
     - exists:
       - '**/*.py'
+
+.php_rules:
+  rules:
+    - if: '$SEC_PHP == "true"'
+    - exists:
+      - '**/*.php'
+      - '**/*.pht'
+
+.ruby_rules:
+  rules:
+    - if: '$SEC_RUBY == "true"'
+    - exists:
+      - '**/*.rb'
+
 
 
 # INFRA
@@ -42,8 +98,7 @@ scan:hadolint:
     - hadolint -f json ./$SEC_CODE_FOLDER/Dockerfile > $DD_REPORT_FILE_NAME || true
   extends: 
     - .for_code_scan
-  rules:
-    - if: '$SEC_DOCKER == "true"'
+    - .docker_rules
 
 # SAST
 
@@ -74,8 +129,7 @@ sast:php:phpcs-security-audit:
   extends: 
     - .for_code_scan 
     - .sast
-  rules:
-    - if: '$SEC_PHP == "true"'
+    - .php_rules
 
 sast:go:gosec:
   variables:
@@ -95,8 +149,7 @@ sast:go:gosec:
   extends: 
     - .for_code_scan 
     - .sast
-  rules:
-    - if: '$SEC_GOLANG == "true"'
+    - .php_rules
 
 sast:js:retirejs:
   variables:
@@ -114,8 +167,7 @@ sast:js:retirejs:
   extends: 
     - .for_code_scan 
     - .sast
-  rules:
-    - if: '$SEC_JS == "true"'
+    - .js_rules
 
 sast:js:eslint:
   variables:
@@ -130,8 +182,7 @@ sast:js:eslint:
   extends: 
     - .for_code_scan 
     - .sast
-  rules:
-    - if: '$SEC_JS == "true"'
+    - .js_rules
 
 sast:ruby:brakeman:
   variables:
@@ -145,8 +196,7 @@ sast:ruby:brakeman:
   extends: 
     - .for_code_scan 
     - .sast
-  rules:
-    - if: '$SEC_RUBY == "true"'
+    - .ruby_rules
 
 sast:java:spotbugs:
   variables:
@@ -162,8 +212,7 @@ sast:java:spotbugs:
   extends: 
     - .for_code_scan 
     - .sast
-  rules:
-    - if: '$SEC_JAVA == "true"'
+    - .java_rules
 
 # Other languages/technologies
 sast:grep:semgrep:
@@ -180,9 +229,7 @@ sast:grep:semgrep:
   extends: 
     - .for_code_scan 
     - .sast
-  rules:
-    - if: '$SEC_GREP == "true"'
-
+    - .grep_rules
 
 sast:grep:terrascan:
   variables:
@@ -197,9 +244,7 @@ sast:grep:terrascan:
   extends: 
     - .for_code_scan 
     - .sast
-  rules:
-    - if: '$SEC_DOCKER == "true" || $SEC_IAC == "true"'
-
+    - .iac_rules
 
 # Mobile SAST
 
@@ -233,5 +278,7 @@ dep-scan:trivy:
   extends: 
     - .for_code_scan
     - .sast
-  rules:
-    - if: '$SEC_PYTHON == "true" || $SEC_RUBY == "true" || $SEC_PHP == "true" || $SEC_JS == "true"'
+    - .python_rules
+    - .php_rules
+    - .js_rules
+    - .ruby_rules
