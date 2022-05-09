@@ -20,6 +20,7 @@ security:
     # SAST settings
     SEC_SAST_ENABLE: "true"
     SEC_DOCKER: "true"
+    SEC_PATH_TO_DOCKERFILE_FOLDER: ""
     SEC_IAC: "true"
     SEC_GREP: "true"
     SEC_SEMGREP_CONFIG: 'p/ci'

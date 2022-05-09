@@ -91,6 +91,7 @@ scan:hadolint:
     DD_SCAN_TYPE: 'Hadolint Dockerfile check'
     DD_REPORT_FILE_NAME: 'hadolint.json'
     DD_GROUP_BY: 'file_path'
+    SEC_PATH_TO_DOCKERFILE_FOLDER: $SEC_CODE_FOLDER
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/hadolint:$SEC_HADOLINT_VER"
   script:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
