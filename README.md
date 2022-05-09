@@ -1,3 +1,7 @@
+# Video guide
+
+[![Video guide](https://img.youtube.com/vi/DLN1kNh_Ha0/0.jpg)](https://www.youtube.com/watch?v=DLN1kNh_Ha0 "Video guide")
+
 # Step-by-step guide on setup
 
 1. Make a shared group in your corporate gitlab
