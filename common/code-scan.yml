@@ -19,6 +19,14 @@
   rules:
     - if: '$SEC_SAST_ENABLE == "true"'
 
+# Language rules
+
+.python_rules:
+  rules:
+    - if: '$SEC_PYTHON == "true"'
+    - exists:
+      - '**/*.py'
+
 
 # INFRA
 
@@ -51,8 +59,7 @@ sast:py:bandit:
   extends: 
     - .for_code_scan
     - .sast
-  rules:
-    - if: '$SEC_PYTHON == "true"'
+    - .python_rules
 
 sast:php:phpcs-security-audit:
   variables:
@@ -191,7 +198,7 @@ sast:grep:terrascan:
     - .for_code_scan 
     - .sast
   rules:
-    - if: '$SEC_DOCKER == "true"'
+    - if: '$SEC_DOCKER == "true" || $SEC_IAC == "true"'
 
 
 # Mobile SAST

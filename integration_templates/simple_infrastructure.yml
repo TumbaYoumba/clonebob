@@ -17,3 +17,4 @@ security:
     # Infrastructure scanners
     SEC_INFRA_ENABLE: "true"
     SEC_INFRA_DOMAIN: "exxxxample.com"
+    SEC_IAC: "true"
