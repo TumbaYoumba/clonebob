@@ -11,6 +11,31 @@
 8. Now you can use the following example:
 
 
+## To scan your code without passing any parameters
+
+It will detect all languages/technologies automatically and run checks without parameters
+
+```yml
+stages: 
+  # after build stage
+  - security
+
+security:
+  stage: security
+  allow_failure: true
+  trigger:
+    include:
+    # Path to the shared repo
+      - project: 'whitespots-public/pipelines'
+        # a proper branch name
+        ref: 'main'
+        file: 'pipelines.yml'
+```
+
+## To scan your code with specific parameters
+
+Look [here](integration_templates/detailed_integration.yml) if you need more parameters
+
 ```yml
 stages: 
   # after build stage
