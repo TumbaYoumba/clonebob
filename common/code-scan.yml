@@ -186,7 +186,7 @@ sast:grep:terrascan:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
     # first, it should be updated
     - terrascan init 
-    - terrascan scan ./$SEC_CODE_FOLDER > $DD_REPORT_FILE_NAME || true
+    - terrascan scan ./$SEC_CODE_FOLDER -o json > $DD_REPORT_FILE_NAME || true
   extends: 
     - .for_code_scan 
     - .sast
