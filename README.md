@@ -1,8 +1,18 @@
-# Video guide
-
 [![Video guide](https://img.youtube.com/vi/DLN1kNh_Ha0/0.jpg)](https://www.youtube.com/watch?v=DLN1kNh_Ha0 "Video guide")
 
-# Step-by-step guide on setup
+[[_TOC_]]
+
+# Setup
+
+## Pipelines usage without clonning
+
+1. Set `SEC_DD_KEY`, `SEC_DD_URL` and `SEC_MOBILE_MOBSF_URL` (if you want to use an external mobsf) in the GitLab group where your repositories are placed. 
+(get this token from your DefectDojo instance)
+2. Now you are ready to trigger our pipelines. See next
+
+## Pipelines usage in your corporate GitLab
+
+### Setup
 
 1. Make a shared group in your corporate gitlab
 2. Create a project in that group (`pipelines` here)
@@ -10,12 +20,22 @@
 4. Edit `common/variables.yml` file with proper urls in `SEC_DD_URL` and `SEC_MOBILE_MOBSF_URL` (if you want to use an external mobsf). 
 5. You need to edit the `SEC_PATH_TO_IMAGES` variable in `common/variables.yml` (it's just a project path to security images project).
 6. And the same value should be written in `pipelines.yml` file to set `.image` include directive properly (We will remove this step later)
-(image: $CI_REGISTRY/whitespots-public/security-images/toolset:latest)
+(image: `$CI_REGISTRY/whitespots-public/security-images/toolset:latest`)
 7. Set `SEC_DD_KEY` in your project group. (get this token from your DefectDojo instance)
 8. Now you can use the following example:
 
+### Adding new scanners
 
-## To scan your code without passing any parameters
+1. Put scanner version to `common/variables.yml` (**pipelines** repo)
+2. Add Dockerfile to folder in (**security-images** repo)
+3. Add job to gitlab-ci.yml (**security-images** repo)
+4. Add job with scan script in `common` folder (**pipelines** repo)
+5. Configure default variables in `common/variables.yml` (**pipelines** repo)
+6. Check all
+
+# Integration
+
+## How to trigger pipelines without passing any parameters
 
 It will detect all languages/technologies automatically and run checks without parameters
 
@@ -36,7 +56,7 @@ security:
         file: 'pipelines.yml'
 ```
 
-## To scan your code with specific parameters
+## How to trigger pipelines with specific parameters
 
 Look [here](integration_templates/detailed_integration.yml) if you need more parameters
 
@@ -105,13 +125,12 @@ security:
 
 ```
 
+# Integration examples
 
+All listed examples contain `.gitlab-ci.yml` file, where you may see the integration. Some of them use basic integration, others - detailed (with variables)
 
-# Add new scanner
-
-1. Put scanner version to `common/variables.yml` (**pipelines** repo)
-2. Add Dockerfile to folder in (**security-images** repo)
-3. Add job to gitlab-ci.yml (**security-images** repo)
-4. Add job with scan script in .gitlab folder (**pipelines** repo)
-5. Configure default variables in `common/variables.yml` (**pipelines** repo)
-6. Check all
+- [Python app](https://gitlab.com/whitespots-public/vulnerable-apps/vulnerable-python-app). Here you may see the difference between `include` and `parent-child` approaches.
+- [Java app + gradle kotlin](https://gitlab.com/whitespots-public/vulnerable-apps/vulnerable-java-gradle-kotlin)
+- [Java app + gradle](https://gitlab.com/whitespots-public/vulnerable-apps/vulnerable-java-gradle-app)
+- [JS app](https://gitlab.com/whitespots-public/vulnerable-apps/vulnerable-js-app)
+- [K8S app](https://gitlab.com/whitespots-public/vulnerable-apps/vulnerable-k8s-app)
