@@ -96,7 +96,7 @@ scan:hadolint:
   script:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
     # - find `pwd` -name "Dockerfile" -type f -exec /bin/hadolint {} \;
-    - hadolint -f json ./$SEC_CODE_FOLDER/Dockerfile > $DD_REPORT_FILE_NAME || true
+    - hadolint -f json ./$SEC_PATH_TO_DOCKERFILE_FOLDER/Dockerfile > $DD_REPORT_FILE_NAME || true
   extends: 
     - .for_code_scan
     - .docker_rules
