@@ -40,6 +40,9 @@
       - '**/*.go'
       - '**/*.php'
       - '**/*.java'
+      - '**/*.scala'
+      - '**/*.kt'
+      - '**/*.groovy'
       - '**/*.js'
       - '**/*.py'
 
@@ -62,6 +65,9 @@
     - if: '$SEC_JAVA == "true"'
     - exists:
       - '**/*.java'
+      - '**/*.scala'
+      - '**/*.kt'
+      - '**/*.groovy'
 
 .python_rules:
   rules:
