@@ -134,3 +134,10 @@ All listed examples contain `.gitlab-ci.yml` file, where you may see the integra
 - [Java app + gradle](https://gitlab.com/whitespots-public/vulnerable-apps/vulnerable-java-gradle-app)
 - [JS app](https://gitlab.com/whitespots-public/vulnerable-apps/vulnerable-js-app)
 - [K8S app](https://gitlab.com/whitespots-public/vulnerable-apps/vulnerable-k8s-app)
+
+
+# Community contributors
+
+- @httpnotonly (Refactoring)
+- @ivanello (Architecture)
+- @grimnir1 (Hadolint improvements)
