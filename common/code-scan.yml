@@ -101,8 +101,14 @@ scan:hadolint:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/hadolint:$SEC_HADOLINT_VER"
   script:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
-    # - find `pwd` -name "Dockerfile" -type f -exec /bin/hadolint {} \;
-    - hadolint -f json ./$SEC_PATH_TO_DOCKERFILE_FOLDER/Dockerfile > $DD_REPORT_FILE_NAME || true
+    # Check all Dockerfiles
+    - find . -name "Dockerfile" -type f -exec hadolint --no-fail -f json {} > $DD_REPORT_FILE_NAME \;
+    # prepare the report for DefectDojo (We need to split many reports by comma)
+    - sed -i 's/\[\]//g' $DD_REPORT_FILE_NAME
+    - sed -i ':a;N;$!ba;s/\n//g' $DD_REPORT_FILE_NAME
+    - sed -i 's/}\]\[{/},{/g' $DD_REPORT_FILE_NAME
+    # This is the script for only one Dockerfile (we think it's not required anymore, but maybe it would be interesting for you)
+    # - hadolint -f json ./$SEC_PATH_TO_DOCKERFILE_FOLDER/Dockerfile > $DD_REPORT_FILE_NAME || true
   extends: 
     - .for_code_scan
     - .docker_rules
