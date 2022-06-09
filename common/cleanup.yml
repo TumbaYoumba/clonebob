@@ -2,7 +2,8 @@
   needs: 
     - job: init
       artifacts: true
-    - stage: secrets-scan
+    - job: scan:trufflehog3
+    - job: scan:gitleaks
 
 
 cleanup:
