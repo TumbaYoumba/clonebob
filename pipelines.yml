@@ -9,6 +9,7 @@ stages:
   - sec-mobile           # * To add Mobsf security scan
   - subdomains-detect    # * To add infrastructure security scan
   - subdomains-scan      # * To add infrastructure security scan
+  - cleanup              # * To mark some vulnerabilities as False Positives & patch dependencies (TBD)
 
 
 # All scan stages should wait for defectdojo preparation stage
@@ -53,6 +54,8 @@ include:
   - local: 'common/sonarqube.yml'
     ref: 'main'
   - local: 'common/infrastructure.yml'
+    ref: 'main'
+  - local: 'common/cleanup.yml'
     ref: 'main'
 
   # Upload report stage

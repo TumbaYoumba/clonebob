@@ -1,0 +1,10 @@
+
+cleanup:
+  extends: 
+    - .allow_failure
+    - .needs_init
+    - .tags
+  stage: cleanup
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/toolset:latest"
+  script:
+      - python /falser/falser.py
