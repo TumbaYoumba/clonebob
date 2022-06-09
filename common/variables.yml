@@ -7,7 +7,7 @@ variables:
     # SEC_DD_KEY: need to set in CI variables in your project settings
     DD_GROUP_BY: 'file_path' # Default value
 # SECRETS
-    SEC_TRUFFLEHOG3_VER: "2.0.4" # do not update
+    SEC_TRUFFLEHOG3_VER: "3.0.3" # 2.0.4 for dojo v2.4
     SEC_GITLEAKS_VER: "7.2.2"
 # SAST
     SEC_BANDIT_VER: "1.7.0"
