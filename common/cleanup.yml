@@ -8,7 +8,7 @@
 cleanup:
   extends: 
     - .allow_failure
-    - .needs_init
+    - .needs_init_and_scanners
     - .tags
   stage: cleanup
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/toolset:latest"
