@@ -119,6 +119,7 @@ init:
       echo "##### saving variables"
       echo "DD_PRODUCT_ID=$DD_PRODUCT_ID" >> variables.env
       echo "DD_ENGAGEMENT_ID=$DD_ENGAGEMENT_ID" >> variables.env
+      echo "DOJO_PROJECT_NAME=$DOJO_PROJECT_NAME" >> variables.env
       cat variables.env
   artifacts:
     name: "$CI_JOB_NAME"
