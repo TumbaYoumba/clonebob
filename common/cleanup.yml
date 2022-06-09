@@ -1,3 +1,9 @@
+.needs_init_and_scanners:
+  needs: 
+    - job: init
+      artifacts: true
+    - job: secrets-scan
+
 
 cleanup:
   extends: 
