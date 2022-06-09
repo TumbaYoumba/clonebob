@@ -2,7 +2,7 @@
   needs: 
     - job: init
       artifacts: true
-    - secrets-scan
+    - stage: secrets-scan
 
 
 cleanup:
