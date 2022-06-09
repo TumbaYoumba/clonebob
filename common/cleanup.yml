@@ -7,4 +7,4 @@ cleanup:
   stage: cleanup
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/toolset:latest"
   script:
-      - python /falser/falser.py
+      - python3 /falser/falser.py
