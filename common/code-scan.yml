@@ -281,7 +281,3 @@ dep-scan:trivy:
     - trivy fs --output $DD_REPORT_FILE_NAME --format json --no-progress --severity $SEC_TRIVY_MINIMUM_SEVERITY ./$SEC_CODE_FOLDER || true
   extends: 
     - .for_code_scan
-    - .python_rules
-    - .php_rules
-    - .js_rules
-    - .ruby_rules
