@@ -16,7 +16,10 @@
 
 .after_script_patcher:
   after_script:
+    # For setting dojo variables
     - export $(xargs < variables.env)
+    # To send patched files
+    - export PYTHONPATH='./:$PYTHONPATH
     - python3 /simplifier/dependency-task-simplifier.py
 
 
