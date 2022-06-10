@@ -12,6 +12,9 @@
     - job: scan:trufflehog3
     - job: scan:gitleaks
 
+.after_script_patcher:
+  after_script:
+    - python3 /simplifier/dependency-task-simplifier.py
 
 auto-falser:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/toolset:latest"
@@ -22,16 +25,18 @@ auto-falser:
 
 
 patch-libraries:pip:
+  variables:
+    DD_ATTACHMENT_FILE_NAME: 'requirements.txt'
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/ws-patcher:latest"
   script:
     - python3 -m pip_audit -r requirements.txt --fix  
   extends: 
     - .for_cleanup
+    - .after_script_patcher
   rules:
     - if: '$SEC_IMAGE_SCAN_ENABLE == "true"'
       exists:
         - 'requirements.txt'
-      
   artifacts:
     name: "$CI_JOB_NAME"
     paths:
@@ -40,12 +45,15 @@ patch-libraries:pip:
 
 
 patch-libraries:npm:
+  variables:
+    DD_ATTACHMENT_FILE_NAME: 'package.json'
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/ws-patcher:latest"
   script:
     - npm install
     - npm audit fix --force
   extends: 
     - .for_cleanup
+    - .after_script_patcher
   rules:
     - if: '$SEC_IMAGE_SCAN_ENABLE == "true"'
       exists:
@@ -58,11 +66,14 @@ patch-libraries:npm:
 
 
 patch-libraries:go:
+  variables:
+    DD_ATTACHMENT_FILE_NAME: 'go.mod'
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/ws-patcher:latest"
   script:
     - go get -u && go mod tidy
   extends: 
     - .for_cleanup
+    - .after_script_patcher
   rules:
     - if: '$SEC_IMAGE_SCAN_ENABLE == "true"'
       exists:
