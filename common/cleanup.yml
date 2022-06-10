@@ -19,7 +19,7 @@
     # For setting dojo variables
     - export $(xargs < variables.env)
     # To send patched files
-    - export PYTHONPATH="./:$PYTHONPATH"
+    - export CHDIR=$(pwd)
     - python3 /simplifier/dependency-task-simplifier.py
 
 
