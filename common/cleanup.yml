@@ -5,20 +5,24 @@
     - .allow_failure
     - .tags
 
+
 .needs_init_and_scanners:
   needs: 
-    - job: init
-      artifacts: true
     - job: scan:trufflehog3
     - job: scan:gitleaks
+    - job: init
+      artifacts: true
+    
 
 .before_script_patcher:
   before_script:
-    - source variables.env
+    - export $(xargs < variables.env)
+
 
 .after_script_patcher:
   after_script:
     - python3 /simplifier/dependency-task-simplifier.py
+
 
 auto-falser:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/toolset:latest"
