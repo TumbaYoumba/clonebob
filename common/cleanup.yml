@@ -12,6 +12,10 @@
     - job: scan:trufflehog3
     - job: scan:gitleaks
 
+.before_script_patcher:
+  before_script:
+    - source variables.env
+
 .after_script_patcher:
   after_script:
     - python3 /simplifier/dependency-task-simplifier.py
@@ -32,6 +36,7 @@ patch-libraries:pip:
     - python3 -m pip_audit -r requirements.txt --fix  
   extends: 
     - .for_cleanup
+    - .before_script_patcher
     - .after_script_patcher
   rules:
     - if: '$SEC_IMAGE_SCAN_ENABLE == "true"'
@@ -53,6 +58,7 @@ patch-libraries:npm:
     - npm audit fix --force
   extends: 
     - .for_cleanup
+    - .before_script_patcher
     - .after_script_patcher
   rules:
     - if: '$SEC_IMAGE_SCAN_ENABLE == "true"'
@@ -73,6 +79,7 @@ patch-libraries:go:
     - go get -u && go mod tidy
   extends: 
     - .for_cleanup
+    - .before_script_patcher
     - .after_script_patcher
   rules:
     - if: '$SEC_IMAGE_SCAN_ENABLE == "true"'
