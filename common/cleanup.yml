@@ -14,7 +14,6 @@
 
 .before_script_patcher:
   before_script:
-    - cat variables.env
     - source variables.env
 
 .after_script_patcher:
