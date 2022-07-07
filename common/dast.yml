@@ -2,8 +2,8 @@
   rules:
     - if: '$SEC_DAST_URL_TO_SCAN != ""'
 
-dast:arachni:
-  stage: dast
+web-dast:arachni:
+  stage: web-dast
   variables:
     DD_SCAN_TYPE: 'Arachni Scan'
     DD_REPORT_FILE_NAME: 'arachni.json'
