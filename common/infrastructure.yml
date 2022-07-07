@@ -6,8 +6,11 @@
 
 .needs_subdomains_detect:
   needs: 
+    - job: init
+      artifacts: true
     - job: subdomains-detect
       artifacts: true
+    
 
 subdomains-detect:
   stage: subdomains-detect
