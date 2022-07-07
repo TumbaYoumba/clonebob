@@ -1,6 +1,6 @@
 .dast_rules:
   rules:
-    - if: '$SEC_DAST_ENABLE == "true"'
+    - if: '$SEC_DAST_URL_TO_SCAN != ""'
 
 dast:arachni:
   stage: dast
