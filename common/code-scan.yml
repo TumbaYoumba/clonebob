@@ -120,7 +120,7 @@ scan:checkov:
     DD_SCAN_TYPE: 'Checkov Scan'
     DD_REPORT_FILE_NAME: 'checkov.json'
     DD_GROUP_BY: 'file_path'
-  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/checkov:$SEC_HCHECKOV_VER"
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/checkov:$SEC_CHECKOV_VER"
   script:
     - checkov -d ./$SEC_CODE_FOLDER -s -o json > $DD_REPORT_FILE_NAME
   extends: 
