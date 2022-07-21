@@ -16,11 +16,13 @@ variables:
     SEC_RETIREJS_VER: "2.2.4"
     SEC_ESLINT_VER: "7.20.0"
     SEC_BRAKEMAN_VER: "5.0.0"
-    SEC_HADOLINT_VER: "1.22.1"
-    SEC_GIXY_VER: "0.1.20"
     SEC_SEMGREP_VER: "0.71.0"
     SEC_SPOTBUGS_VER: "2.15.2"
+# IAC / Infrascructure configsuration scanners
     SEC_TERRASCAN_VER: "1.14.0"
+    SEC_CHECKOV_VER: "2.1.67"
+    SEC_GIXY_VER: "0.1.20"
+    SEC_HADOLINT_VER: "1.22.1"
 # DEP CHECK
     SEC_TRIVY_VER: "0.20.2"
     SEC_GRYPE_VER: "0.24.0"
