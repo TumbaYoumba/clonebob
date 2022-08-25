@@ -292,6 +292,6 @@ dep-scan:trivy:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/trivy:$SEC_TRIVY_VER"
   script:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
-    - trivy fs --output $DD_REPORT_FILE_NAME --format json --severity $SEC_TRIVY_MINIMUM_SEVERITY ./$SEC_CODE_FOLDER || true
+    - trivy fs --output $DD_REPORT_FILE_NAME --security-checks vuln --format json --severity $SEC_TRIVY_MINIMUM_SEVERITY ./$SEC_CODE_FOLDER || true
   extends: 
     - .for_code_scan
