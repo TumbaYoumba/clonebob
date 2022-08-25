@@ -18,7 +18,7 @@ image-scan:trivy:
     SEC_IMAGE_TO_SCAN_NAME: "${CI_REGISTRY_IMAGE}"
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/trivy:$SEC_TRIVY_VER"
   script:
-    - trivy image --output $DD_REPORT_FILE_NAME --format json --no-progress --light --severity $SEC_TRIVY_MINIMUM_SEVERITY $SEC_IMAGE_TO_SCAN_NAME:$SEC_IMAGE_TO_SCAN_TAG || true
+    - trivy image --output $DD_REPORT_FILE_NAME --format json --severity $SEC_TRIVY_MINIMUM_SEVERITY $SEC_IMAGE_TO_SCAN_NAME:$SEC_IMAGE_TO_SCAN_TAG || true
   extends: 
     - .allow_failure
     - .tags
