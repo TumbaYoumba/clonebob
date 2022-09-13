@@ -46,9 +46,9 @@ security:
     SEC_IMAGE_REGISTRY_TOKEN: ${CI_BUILD_TOKEN}
     IMAGE_TO_SCAN: "$CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME"
     SEC_TRIVY_MINIMUM_SEVERITY: 'HIGH,CRITICAL'
+    SEC_CLEANUP_ENABLE: "true" # To auto-collapse all reuirements vulnerabilities to one finding
 
     # DAST settings
-    SEC_DAST_ENABLE: "true"
     SEC_DAST_URL_TO_SCAN: "https://example.com"
     SEC_ARACHNI_ADDITIONAL_FLAGS: ''
     # For API tests via OWASP ZAP

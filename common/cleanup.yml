@@ -41,7 +41,7 @@ patch-libraries:pip:
     - .for_cleanup
     - .after_script_patcher
   rules:
-    - if: '$SEC_IMAGE_SCAN_ENABLE == "true"'
+    - if: '$SEC_CLEANUP_ENABLE == "true"'
       exists:
         - 'requirements.txt'
   artifacts:
@@ -62,7 +62,7 @@ patch-libraries:npm:
     - .for_cleanup
     - .after_script_patcher
   rules:
-    - if: '$SEC_IMAGE_SCAN_ENABLE == "true"'
+    - if: '$SEC_CLEANUP_ENABLE == "true"'
       exists:
         - 'package.json'
   artifacts:
@@ -82,7 +82,7 @@ patch-libraries:go:
     - .for_cleanup
     - .after_script_patcher
   rules:
-    - if: '$SEC_IMAGE_SCAN_ENABLE == "true"'
+    - if: '$SEC_CLEANUP_ENABLE == "true"'
       exists:
         - 'go.mod'
   artifacts:
