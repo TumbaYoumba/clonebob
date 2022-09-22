@@ -102,7 +102,7 @@ patch-libraries:go:
 
 patch-libraries:other:
   variables:
-    ATTACH_FILE: False
+    ATTACH_FILE: 'False'
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/ws-patcher:latest"
   script:
     - | 
