@@ -66,7 +66,7 @@ init:
       DD_PRODUCT_TYPE_ID=$(curl -s --insecure -XGET "$SEC_DD_URL/api/v2/product_types/" \
           -H "Content-Type: application/json" \
           -H "Authorization: Token $SEC_DD_KEY"  \
-          -d "$(product_type_post_data)" | jq --arg PROJECT_TYPE_NAME $CI_PROJECT_ROOT_NAMESPACE '.results[] | select(.name == $PROJECT_TYPE_NAME) | .id')
+          -d "$(product_type_post_data)" | jq --arg PROJECT_TYPE_NAME $DOJO_PROJECT_TYPE '.results[] | select(.name == $PROJECT_TYPE_NAME) | .id')
 
       ######
 
