@@ -11,7 +11,7 @@ stages:
   - subdomains-scan      # * To add infrastructure security scan
   - cleanup              # * To mark some vulnerabilities as False Positives & patch dependencies (TBD)
 
-
+#test
 # All scan stages should wait for defectdojo preparation stage
 .needs_init:
   needs: 
