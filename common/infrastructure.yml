@@ -20,7 +20,7 @@ subdomains-detect:
   variables:
     SEC_INFRA_DOMAIN: example.com
   script:
-    - subfinder -d $SEC_INFRA_DOMAIN -recursive -o domains.txt
+    - subfinder -d $SEC_INFRA_DOMAIN -active -o domains.txt
     - sed 's/^/http\:\/\//' domains.txt > urls.txt
     - ls
   rules:
