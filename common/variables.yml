@@ -8,7 +8,7 @@ variables:
     DD_GROUP_BY: 'file_path' # Default value
 # SECRETS
     SEC_TRUFFLEHOG3_VER: "3.0.3" # 2.0.4 for dojo v2.4
-    SEC_GITLEAKS_VER: "7.2.2" # 8.8.7 does not work well
+    SEC_GITLEAKS_VER: "8.15.2" # 8.8.7 does not work well, 7.2.2 workds fine
 # SAST
     SEC_BANDIT_VER: "1.7.0"
     SEC_PHPCS_VER: "2.0.1"
