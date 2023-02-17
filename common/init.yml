@@ -26,7 +26,7 @@ init:
 
   script:
     - |
-      set -x
+      set -xe
       env | grep "SEC_"
       
       if [ "$DOJO_PROJECT_TYPE" == "" ]; then
@@ -45,7 +45,7 @@ init:
         export DOJO_REPO_URL="${CI_PROJECT_URL}/-/tree/${CI_COMMIT_BRANCH}"
       fi
 
-      ###### Product type
+      ###### Create/ Get Product type
 
       echo "---------- create Product type ${DOJO_PROJECT_TYPE} ------------"
 
@@ -63,14 +63,14 @@ init:
           -H "Authorization: Token $SEC_DD_KEY"  \
           -d "$(product_type_post_data)"
 
-      DD_PRODUCT_TYPE_ID=$(curl -s --insecure -XGET "$SEC_DD_URL/api/v2/product_types/" \
+      DD_PRODUCT_TYPE_ID=$(curl -s --insecure -XGET "$SEC_DD_URL/api/v2/product_types/?name=$DOJO_PROJECT_TYPE" \
           -H "Content-Type: application/json" \
           -H "Authorization: Token $SEC_DD_KEY"  \
           -d "$(product_type_post_data)" | jq --arg PROJECT_TYPE_NAME $DOJO_PROJECT_TYPE '.results[] | select(.name == $PROJECT_TYPE_NAME) | .id')
 
       ######
 
-      ###### Product 
+      ###### Create / Get Product 
 
       echo "---------- create Product ${DOJO_PROJECT_NAME} ------------"
       product_post_data()
