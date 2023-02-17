@@ -26,7 +26,7 @@ stages:
 .tags:
   tags:
     # public runners 
-    - gitlab-org
+    - gitlab-org-docker
 
 .image:
   image: $CI_REGISTRY/whitespots-public/security-images/toolset:latest
