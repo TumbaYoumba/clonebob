@@ -12,7 +12,7 @@ variables:
 # SAST
     SEC_BANDIT_VER: "1.7.0"
     SEC_PHPCS_VER: "2.0.1"
-    SEC_GOSEC_VER: "2.9.1"
+    SEC_GOSEC_VER: "2.15.0" # "2.9.1" is stable but can not find anything
     SEC_RETIREJS_VER: "2.2.4"
     SEC_ESLINT_VER: "7.20.0"
     SEC_BRAKEMAN_VER: "5.0.0"
