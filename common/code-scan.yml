@@ -173,7 +173,7 @@ sast:go:gosec:
     # G307: Deferring a method which returns an error
   extends: 
     - .for_code_scan
-    - .php_rules
+    - .golang_rules
 
 sast:js:retirejs:
   variables:
