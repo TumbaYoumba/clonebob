@@ -16,7 +16,7 @@ variables:
     SEC_RETIREJS_VER: "2.2.4"
     SEC_ESLINT_VER: "7.20.0"
     SEC_BRAKEMAN_VER: "5.0.0"
-    SEC_SEMGREP_VER: "0.71.0"
+    SEC_SEMGREP_VER: "1.13.0" # "0.71.0"
     SEC_SPOTBUGS_VER: "2.15.2"
 # SAST IAC / Infrascructure configuration scanners
     SEC_TERRASCAN_VER: "1.14.0"
