@@ -7,8 +7,8 @@
 image-scan:trivy:
   stage: image-scan
   variables:
-    DD_SCAN_TYPE: 'Trivy Scan'
-    DD_REPORT_FILE_NAME: 'trivy-image.json'
+    SCAN_TYPE: 'Trivy Scan'
+    REPORT_FILE_NAME: 'trivy-image.json'
     DD_GROUP_BY: 'component_name'
     TRIVY_AUTH_URL: "$SEC_IMAGE_REGISTRY_URL"
     TRIVY_USERNAME: "$SEC_IMAGE_REGISTRY_USER"
@@ -18,19 +18,19 @@ image-scan:trivy:
     SEC_IMAGE_TO_SCAN_NAME: "${CI_REGISTRY_IMAGE}"
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/trivy:$SEC_TRIVY_VER"
   script:
-    - trivy image --output $DD_REPORT_FILE_NAME --security-checks vuln --format json --severity $SEC_TRIVY_MINIMUM_SEVERITY $SEC_IMAGE_TO_SCAN_NAME:$SEC_IMAGE_TO_SCAN_TAG || true
+    - trivy image --output $REPORT_FILE_NAME --security-checks vuln --format json --severity $SEC_TRIVY_MINIMUM_SEVERITY $SEC_IMAGE_TO_SCAN_NAME:$SEC_IMAGE_TO_SCAN_TAG || true
   extends: 
     - .allow_failure
     - .tags
     - .needs_init
     - .rules_image_scan
-    - .dd-upload-report
+    - .upload-report
 
 image-scan:grype:
   stage: image-scan
   variables:
-    DD_SCAN_TYPE: 'anchore_grype'
-    DD_REPORT_FILE_NAME: 'grype.json'
+    SCAN_TYPE: 'anchore_grype'
+    REPORT_FILE_NAME: 'grype.json'
     DD_GROUP_BY: 'component_name'
     GRYPE_REGISTRY_AUTH_AUTHORITY: "$SEC_IMAGE_REGISTRY_URL"
     GRYPE_REGISTRY_AUTH_USERNAME: "$SEC_IMAGE_REGISTRY_USER"
@@ -41,10 +41,10 @@ image-scan:grype:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/grype:$SEC_GRYPE_VER"
   script:
     - echo "Scanning image - $SEC_IMAGE_TO_SCAN_NAME:$SEC_IMAGE_TO_SCAN_TAG with $SEC_IMAGE_TO_SCAN_NAME"
-    - grype $SEC_IMAGE_TO_SCAN_NAME:$SEC_IMAGE_TO_SCAN_TAG -o json > $DD_REPORT_FILE_NAME || true
+    - grype $SEC_IMAGE_TO_SCAN_NAME:$SEC_IMAGE_TO_SCAN_TAG -o json > $REPORT_FILE_NAME || true
   extends: 
     - .allow_failure
     - .tags
     - .needs_init
     - .rules_image_scan
-    - .dd-upload-report
+    - .upload-report

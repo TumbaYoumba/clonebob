@@ -1,0 +1,48 @@
+# need vars
+# DD_URL
+# DD_KEY
+# DD_REPORT_FILE_NAME
+# DD_SCAN_TYPE
+# DD_ENGAGEMENT_ID
+# DD_GROUP_BY file_path
+
+.upload-report:
+  after_script:
+    - |
+      set -x
+      echo "Uploading report with /.after-script-template-upload-report.yml"
+      ls -la
+      export $(xargs < variables.env)
+
+      if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "defectdojo" ]; then
+        curl -s -D - --insecure -X POST "$SEC_DD_URL/api/v2/import-scan/" \
+          -H "accept: application/json" \
+          -H "Content-Type: multipart/form-data" \
+          -H "Authorization: Token $SEC_DD_KEY"  \
+          -F "file=@./$REPORT_FILE_NAME" \
+          -F "scan_type=$SCAN_TYPE" \
+          -F "engagement=$DD_ENGAGEMENT_ID" \
+          -F "active=true" \
+          -F "verified=false" \
+          -F "group_by=$DD_GROUP_BY" \
+          -F "close_old_findings=false" \
+          -F "scan_date=$(date +%F)" || true
+      fi
+
+      if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "portal" ]; then
+        curl -s -D - --insecure -X POST "$SEC_PORTAL_URL/api/v1/scan/import/" \
+          -H "accept: application/json" \
+          -H "Content-Type: multipart/form-data" \
+          -H "Authorization: Token $SEC_PORTAL_KEY"  \
+          -F "file=@./$REPORT_FILE_NAME" \
+          -F "scanner_name=$SCAN_TYPE" \
+          -F "product_name=$CI_PROJECT_NAME" \
+          -F "product_type=$CI_PROJECT_ROOT_NAMESPACE" || true
+      fi
+
+
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+    - $DD_REPORT_FILE_NAME
+    when: always
