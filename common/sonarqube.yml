@@ -11,8 +11,8 @@ sast:sonarqube:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/sonarscanner:$SEC_SONARSCANNER_VER"
   # image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/sonarscanner-dotnet:$SEC_SONARSCANNER_DOTNET_VER"
   variables:
-    DD_SCAN_TYPE: 'Sonarqube'
-    DD_REPORT_FILE_NAME: 'sonarqube.json'
+    SCAN_TYPE: 'Sonarqube'
+    REPORT_FILE_NAME: 'sonarqube.json'
     DD_GROUP_BY: 'file_path'
   script:
     - | 

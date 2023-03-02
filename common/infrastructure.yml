@@ -34,20 +34,20 @@ subdomains-detect:
 subdomains-scan:
   stage: subdomains-scan
   extends: 
-    - .dd-upload-report
+    - .upload-report
     - .for_infra_scan
     - .needs_subdomains_detect
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/nuclei:$SEC_NUCLEI_VER"
   variables:
-    DD_SCAN_TYPE: 'SARIF'
-    DD_REPORT_FILE_NAME: 'report.sarif'
+    SCAN_TYPE: 'SARIF'
+    REPORT_FILE_NAME: 'report.sarif'
     DD_GROUP_BY: 'component_name'
     SEC_NUCLEI_TEMPLATES: '-t exposures -t exposed-panels'
   script:
-    - nuclei -l urls.txt -json -o $DD_REPORT_FILE_NAME $SEC_NUCLEI_TEMPLATES || true
+    - nuclei -l urls.txt -json -o $REPORT_FILE_NAME $SEC_NUCLEI_TEMPLATES || true
   rules:
     - if: '$SEC_INFRA_ENABLE == "true"'
   artifacts:
     paths:
-    - $DD_REPORT_FILE_NAME
+    - $REPORT_FILE_NAME
     when: always

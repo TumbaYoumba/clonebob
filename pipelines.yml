@@ -59,7 +59,7 @@ include:
     ref: 'main'
 
   # Upload report stage
-  - local: 'common/templates/.after-script-dd-upload-report.yml'
+  - local: 'common/templates/.after-script-upload-report.yml'
     ref: 'main'
 
 

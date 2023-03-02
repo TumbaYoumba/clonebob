@@ -2,7 +2,7 @@
   extends: 
     - .allow_failure
     - .tags
-    - .dd-upload-report
+    - .upload-report
   stage: sec-mobile
   image: alpine
   before_script:
@@ -11,15 +11,15 @@
   rules:
     - if: '$SEC_MOBILE_ENABLE == "true"'
   variables:
-    DD_SCAN_TYPE: 'MobSF Scan'
-    DD_REPORT_FILE_NAME: 'mobsf.json'
+    SCAN_TYPE: 'MobSF Scan'
+    REPORT_FILE_NAME: 'mobsf.json'
     DD_GROUP_BY: 'file_path'
     MOBSF_API_KEY: 5d0c570663e9631bca3d4b280817c9410433c03fabcfe62ba818a723eea842ab
     SEC_MOBSF_URL: http://mobsf:8000
     # SEC_MOBILE_APK_PATH
   artifacts:
     paths:
-    - $DD_REPORT_FILE_NAME
+    - $REPORT_FILE_NAME
     when: always
 
 # SURPRISE, you have this stage for deployed version as well
@@ -34,11 +34,11 @@
 #       echo "### Start scanning $SEC_MOBILE_APK_PATH with hash $SEC_MOBSF_HASH on $SEC_MOBILE_MOBSF_URL"
 #       curl -v --insecure -X POST --url $SEC_MOBILE_MOBSF_URL/api/v1/scan --data "scan_type=apk&file_name=$(basename $SEC_MOBILE_APK_PATH)&hash=$SEC_MOBSF_HASH" -H "Authorization:$SEC_MOBILE_MOBSF_TOKEN"
 #       sleep 30
-#       curl -v --insecure -X POST --url $SEC_MOBILE_MOBSF_URL/api/v1/report_json --data "hash=$SEC_MOBSF_HASH" -H "Authorization:$SEC_MOBILE_MOBSF_TOKEN" > $DD_REPORT_FILE_NAME 
-#       # jq .manifest_analysis $DD_REPORT_FILE_NAME
-#       # jq .permissions $DD_REPORT_FILE_NAME
-#       echo "### Average CVSS: $(jq .average_cvss $DD_REPORT_FILE_NAME)"
-#       echo "### Security Score: $(jq .security_score $DD_REPORT_FILE_NAME)"
+#       curl -v --insecure -X POST --url $SEC_MOBILE_MOBSF_URL/api/v1/report_json --data "hash=$SEC_MOBSF_HASH" -H "Authorization:$SEC_MOBILE_MOBSF_TOKEN" > $REPORT_FILE_NAME 
+#       # jq .manifest_analysis $REPORT_FILE_NAME
+#       # jq .permissions $REPORT_FILE_NAME
+#       echo "### Average CVSS: $(jq .average_cvss $REPORT_FILE_NAME)"
+#       echo "### Security Score: $(jq .security_score $REPORT_FILE_NAME)"
 
 mobsf:services:
   extends:
@@ -55,8 +55,8 @@ mobsf:services:
     - sleep 5
     - curl -X POST --url $SEC_MOBSF_URL/api/v1/report_json 
         --data "hash=$SEC_MOBSF_HASH" 
-        --header "Authorization:$MOBSF_API_KEY" > $DD_REPORT_FILE_NAME
-    - cat $DD_REPORT_FILE_NAME
+        --header "Authorization:$MOBSF_API_KEY" > $REPORT_FILE_NAME
+    - cat $REPORT_FILE_NAME
 
 
 checkkarlmarx:
@@ -64,12 +64,12 @@ checkkarlmarx:
   extends: 
     - .allow_failure
     - .tags
-    - .dd-upload-report
+    - .upload-report
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/checkkarlmarx:$SEC_CHECKKARLMARX_VER"
   #image: devkekops/ckm_test_ci
   variables:
-    DD_SCAN_TYPE: 'SARIF'
-    DD_REPORT_FILE_NAME: 'report.sarif'
+    SCAN_TYPE: 'SARIF'
+    REPORT_FILE_NAME: 'report.sarif'
     DD_GROUP_BY: 'file_path'
     SEC_CHECKKARLMARX_DOMAIN: 'mycompany.com'
     SEC_CHECKKARLMARX_QA_TAGS: 'qa test dev stage'
@@ -83,5 +83,5 @@ checkkarlmarx:
     - if: '$SEC_MOBILE_ENABLE == "true"'
   artifacts:
     paths:
-    - $DD_REPORT_FILE_NAME
+    - $REPORT_FILE_NAME
     when: always

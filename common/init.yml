@@ -28,7 +28,15 @@ init:
     - |
       set -xe
       env | grep "SEC_"
-      
+
+      if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "" ]; then
+        export SEC_DEFECT_MANAGEMENT_SYSTEM="defectdojo"
+      fi
+
+      echo "SEC_DEFECT_MANAGEMENT_SYSTEM=$SEC_DEFECT_MANAGEMENT_SYSTEM" >> variables.env
+
+      if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "defectdojo" ]; then
+
       if [ "$DOJO_PROJECT_TYPE" == "" ]; then
         export DOJO_PROJECT_TYPE="$CI_PROJECT_ROOT_NAMESPACE"
       fi
@@ -116,11 +124,17 @@ init:
           -H "Content-Type: application/json" \
           -H "Authorization: Token $SEC_DD_KEY"  \
           -d "$(engagement_post_data)" | jq '.id')
+
       echo "##### saving variables"
       echo "DD_PRODUCT_ID=$DD_PRODUCT_ID" >> variables.env
       echo "DD_ENGAGEMENT_ID=$DD_ENGAGEMENT_ID" >> variables.env
       echo "DOJO_PROJECT_NAME=$DOJO_PROJECT_NAME" >> variables.env
       cat variables.env
+
+      else
+      echo "We don't need this outdated stuff for Whitespots portal. See everything you need in scanners after_script"
+      fi
+
   artifacts:
     name: "$CI_JOB_NAME"
     paths:
