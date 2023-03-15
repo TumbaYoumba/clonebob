@@ -295,3 +295,8 @@ dep-scan:trivy:
     - trivy fs --output $REPORT_FILE_NAME --security-checks vuln --format json --severity $SEC_TRIVY_MINIMUM_SEVERITY ./$SEC_CODE_FOLDER || true
   extends: 
     - .for_code_scan
+  artifacts:
+    paths:
+      - $REPORT_FILE_NAME
+    expire_in: 1 week
+
