@@ -46,6 +46,18 @@
       - '**/*.js'
       - '**/*.py'
 
+.codeql_py_js_go_rules:
+  rules:
+    - if: '$SEC_GREP == "true"'
+    - if: '$SEC_CODEQL == "true"'
+    - exists:
+      - '**/*.go'
+      - '**/*.js'
+      - '**/*.py'
+      - '**/*.jsx'
+      - '**/*.rb'
+      - '**/*.ts'
+
 .iac_rules:
   rules:
     - if: '$SEC_IAC == "true"'
@@ -234,7 +246,44 @@ sast:java:spotbugs:
     - .for_code_scan 
     - .java_rules
 
+
 # Other languages/technologies
+
+# Codeql supports many languages. Some of them must specify the --command flag value to build your sources 
+sast:py-js-go:codeql:
+  variables:
+    SCAN_TYPE: 'SARIF'
+    REPORT_FILE_NAME: 'codeql.json'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/codeql:$SEC_CODEQL_VER"
+  script:
+    - echo "Scanning code with - $CI_REGISTRY_IMAGE"
+    - echo "CI_PROJECT_REPOSITORY_LANGUAGES=$CI_PROJECT_REPOSITORY_LANGUAGES"
+    - mkdir codeql-db
+    # codeql database create codeql-db --command="ls" --db-cluster --language=python,go,javascript --no-run-unnecessary-builds
+    - |
+      if [[ $CI_PROJECT_REPOSITORY_LANGUAGES == *"python"* ]]; then
+        codeql database create codeql-db --db-cluster --language=python --no-run-unnecessary-builds || true
+        codeql database analyze codeql-db/python /opt/codeql-repo/python/ql/src/codeql-suites/python-security-extended.qls --verbose --format=sarif-latest --output=$REPORT_FILE_NAME 
+      fi
+    - |
+      if [[ $CI_PROJECT_REPOSITORY_LANGUAGES == *"javascript"* ]]; then
+        codeql database create codeql-db --db-cluster --language=javascript --no-run-unnecessary-builds || true
+        codeql database analyze codeql-db/python /opt/codeql-repo/javascript/ql/src/codeql-suites/javascript-security-extended.qls --verbose --format=sarif-latest --output=$REPORT_FILE_NAME 
+      fi
+    - |
+      if [[ $CI_PROJECT_REPOSITORY_LANGUAGES == *"go"* ]]; then
+        codeql database create codeql-db --db-cluster --language=go --no-run-unnecessary-builds || true
+        codeql database analyze codeql-db/python /opt/codeql-repo/go/ql/src/codeql-suites/go-security-extended.qls --verbose --format=sarif-latest --output=$REPORT_FILE_NAME 
+      fi
+    
+    - echo "for using custom rules, please save them to /opt/codeql/codeql-suites/python-my.qls"
+    - echo "use this instruction https://docs.github.com/en/code-security/codeql-cli/using-the-codeql-cli/testing-custom-queries"
+  extends:
+    - .for_code_scan
+    - .codeql_py_js_go_rules
+
+
+
 sast:grep:semgrep:
   variables:
     SCAN_TYPE: 'Semgrep JSON Report'
