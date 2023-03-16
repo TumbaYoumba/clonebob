@@ -33,7 +33,7 @@
         curl -s -D - --insecure -X POST "$SEC_PORTAL_URL/api/v1/scan/import/" \
           -H "accept: application/json" \
           -H "Content-Type: multipart/form-data" \
-          -H "Authorization: Token 7af882140eef6da7336cb2137832411f28340672"  \
+          -H "Authorization: Token $SEC_PORTAL_KEY"  \
           -F "file=@./$REPORT_FILE_NAME" \
           -F "scanner_name=$SCAN_TYPE" \
           -F "product_name=$CI_PROJECT_NAME" \
