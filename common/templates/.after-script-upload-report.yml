@@ -14,12 +14,23 @@
       ls -la
       export $(xargs < variables.env)
 
-      if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "defectdojo" ]; then
+      
+
+      readlink -f $REPORT_FILE_NAME > report.list
+      if [ -d "many_reports/" ]; then
+        # we have to rewrite the file
+        ls -d $PWD/*/* | grep many_reports > report.list
+      fi
+
+      cat report.list | while read REPORT_TO_UPLOAD; do \
+      
+       if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "defectdojo" ]; then
+        echo "uploading $REPORT_TO_UPLOAD to defectdojo"
         curl -s -D - --insecure -X POST "$SEC_DD_URL/api/v2/import-scan/" \
           -H "accept: application/json" \
           -H "Content-Type: multipart/form-data" \
           -H "Authorization: Token $SEC_DD_KEY"  \
-          -F "file=@./$REPORT_FILE_NAME" \
+          -F "file=@$REPORT_TO_UPLOAD" \
           -F "scan_type=$SCAN_TYPE" \
           -F "engagement=$DD_ENGAGEMENT_ID" \
           -F "active=true" \
@@ -30,19 +41,23 @@
       fi
 
       if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "portal" ]; then
+        echo "uploading $REPORT_TO_UPLOAD to portal"
         curl -s -D - --insecure -X POST "$SEC_PORTAL_URL/api/v1/scan/import/" \
           -H "accept: application/json" \
           -H "Content-Type: multipart/form-data" \
-          -H "Authorization: Token $SEC_PORTAL_DEV_KEY"  \
-          -F "file=@./$REPORT_FILE_NAME" \
+          -H "Authorization: Token $SEC_PORTAL_KEY"  \
+          -F "file=@$REPORT_TO_UPLOAD" \
           -F "scanner_name=$SCAN_TYPE" \
           -F "product_name=$CI_PROJECT_NAME" \
           -F "product_type=$CI_PROJECT_ROOT_NAMESPACE" || true
       fi
 
+      done
+
 
   artifacts:
     name: "$CI_JOB_NAME"
     paths:
-    - $DD_REPORT_FILE_NAME
+    - $REPORT_FILE_NAME
+    - many_reports/
     when: always

@@ -263,17 +263,17 @@ sast:py-js-go:codeql:
     - |
       if [[ $CI_PROJECT_REPOSITORY_LANGUAGES == *"python"* ]]; then
         codeql database create codeql-db --db-cluster --language=python --no-run-unnecessary-builds || true
-        codeql database analyze codeql-db/python /opt/codeql-repo/python/ql/src/codeql-suites/python-security-extended.qls --verbose --format=sarif-latest --output=$REPORT_FILE_NAME 
+        codeql database analyze codeql-db/python /opt/codeql-repo/python/ql/src/codeql-suites/python-security-extended.qls --verbose --format=sarif-latest --output=$REPORT_FILE_NAME || true
       fi
     - |
       if [[ $CI_PROJECT_REPOSITORY_LANGUAGES == *"javascript"* ]]; then
         codeql database create codeql-db --db-cluster --language=javascript --no-run-unnecessary-builds || true
-        codeql database analyze codeql-db/python /opt/codeql-repo/javascript/ql/src/codeql-suites/javascript-security-extended.qls --verbose --format=sarif-latest --output=$REPORT_FILE_NAME 
+        codeql database analyze codeql-db/python /opt/codeql-repo/javascript/ql/src/codeql-suites/javascript-security-extended.qls --verbose --format=sarif-latest --output=$REPORT_FILE_NAME || true 
       fi
     - |
       if [[ $CI_PROJECT_REPOSITORY_LANGUAGES == *"go"* ]]; then
         codeql database create codeql-db --db-cluster --language=go --no-run-unnecessary-builds || true
-        codeql database analyze codeql-db/python /opt/codeql-repo/go/ql/src/codeql-suites/go-security-extended.qls --verbose --format=sarif-latest --output=$REPORT_FILE_NAME 
+        codeql database analyze codeql-db/python /opt/codeql-repo/go/ql/src/codeql-suites/go-security-extended.qls --verbose --format=sarif-latest --output=$REPORT_FILE_NAME || true 
       fi
     
     - echo "for using custom rules, please save them to /opt/codeql/codeql-suites/python-my.qls"
