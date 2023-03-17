@@ -8,8 +8,7 @@ variables:
     SEC_DD_URL: "https://dd-demo.whitespots.io"
     # SEC_DD_KEY: need to set in CI variables in your project settings
 
-    SEC_PORTAL_URL: "https://portal-dev.whitespots.io"
-    SEC_PORTAL_API_URL: "https://portal-dev.whitespots.io/api/v1/"
+    SEC_PORTAL_URL: "https://portal-demo.whitespots.io"
     # SEC_PORTAL_KEY: need to set in CI variables in your project settings
     
     # Define the target defect management system. Variants: defectdojo, portal
