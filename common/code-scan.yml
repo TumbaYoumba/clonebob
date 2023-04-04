@@ -250,6 +250,7 @@ sast:java:spotbugs:
 # Other languages/technologies
 
 # Codeql supports many languages. Some of them must specify the --command flag value to build your sources 
+# Be aware, that it requirems at least 1gb ram on runners
 sast:py-js-go:codeql:
   variables:
     SCAN_TYPE: 'SARIF'
@@ -259,7 +260,8 @@ sast:py-js-go:codeql:
     - echo "Scanning code with - $CI_REGISTRY_IMAGE"
     - echo "CI_PROJECT_REPOSITORY_LANGUAGES=$CI_PROJECT_REPOSITORY_LANGUAGES"
     - mkdir codeql-db
-    # codeql database create codeql-db --command="ls" --db-cluster --language=python,go,javascript --no-run-unnecessary-builds
+    - mkdir many_reports
+      # codeql database create codeql-db --command="ls" --db-cluster --language=python,go,javascript --no-run-unnecessary-builds
     - |
       if [[ $CI_PROJECT_REPOSITORY_LANGUAGES == *"python"* ]]; then
         codeql database create codeql-db --db-cluster --language=python --no-run-unnecessary-builds || true
@@ -273,7 +275,7 @@ sast:py-js-go:codeql:
     - |
       if [[ $CI_PROJECT_REPOSITORY_LANGUAGES == *"go"* ]]; then
         codeql database create codeql-db --db-cluster --language=go --no-run-unnecessary-builds || true
-        codeql database analyze codeql-db/python /opt/codeql-repo/go/ql/src/codeql-suites/go-security-extended.qls --verbose --format=sarif-latest --output=many_reports/go$REPORT_FILE_NAME || true 
+        codeql database analyze codeql-db/python /opt/codeql-repo/go/ql/src/codeql-suites/go-security-extended.qls --verbose --format=sarif-latest --output=many_reports/go-$REPORT_FILE_NAME || true 
       fi
     
     - echo "for using custom rules, please save them to /opt/codeql/codeql-suites/python-my.qls"
@@ -281,6 +283,10 @@ sast:py-js-go:codeql:
   extends:
     - .for_code_scan
     - .codeql_py_js_go_rules
+  artifacts:
+    paths:
+      - many_reports/
+    expire_in: 1 week
 
 
 
