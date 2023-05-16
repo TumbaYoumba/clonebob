@@ -42,21 +42,7 @@ include:
     ref: 'main'
 
   # Scan stages
-  - local: 'common/secrets-scan.yml'
-    ref: 'main'
-  - local: 'common/code-scan.yml'
-    ref: 'main'
-  - local: 'common/image-scan.yml'
-    ref: 'main'
-  - local: 'common/dast.yml'
-    ref: 'main'
-  - local: 'common/sec-mobile.yml'
-    ref: 'main'
-  - local: 'common/sonarqube.yml'
-    ref: 'main'
   - local: 'common/infrastructure.yml'
-    ref: 'main'
-  - local: 'common/cleanup.yml'
     ref: 'main'
 
   # Upload report stage

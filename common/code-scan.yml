@@ -14,10 +14,6 @@
   rules:
     - if: '$SEC_MOBILE_ENABLE == "true"'
 
-# For sast and code-related scanners (Legacy. Will be deleted soon)
-.sast:
-  rules:
-    - if: '$SEC_SAST_ENABLE == "true"'
 
 # Language rules
 
