@@ -33,7 +33,7 @@ port-scan:
   extends: 
     - .for_infra_scan
   image: 
-    name: projectdiscovery/naabu:latest
+    name: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/naabu:$SEC_NAABU_VER"
     entrypoint: [""]
   needs:
     - job: subdomains-search
@@ -50,7 +50,7 @@ sort-web-only:
   extends: 
     - .for_infra_scan
   image: 
-    name: projectdiscovery/httpx:latest
+    name: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/httpx:$SEC_HTTPX_VER"
     entrypoint: [""]
   needs:
     - job: port-scan
