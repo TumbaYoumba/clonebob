@@ -4,23 +4,19 @@
     - .allow_failure
     - .tags
 
-.needs_subdomains_detect:
-  needs: 
-    - job: init
-      artifacts: true
-    - job: subdomains-detect
-      artifacts: true
-    
 
-subdomains-detect:
-  stage: subdomains-detect
+subdomains-search:
+  stage: subdomains-prepare
   extends: 
     - .for_infra_scan
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/subfinder:$SEC_SUBFINDER_VER"
   variables:
     SEC_INFRA_DOMAIN: example.com
   script:
-    - subfinder -d $SEC_INFRA_DOMAIN -active -o domains.txt
+    - subfinder -d $SEC_INFRA_DOMAIN -active -o subdomains.txt
+    # For cases if no subdomains were found we need to place at least defined domain to list
+    - echo $SEC_INFRA_DOMAIN >> subdomains.txt
+    - cat subdomains.txt | sort -u > domains.txt
     - sed 's/^/http\:\/\//' domains.txt > urls.txt
     - ls
   rules:
@@ -28,7 +24,42 @@ subdomains-detect:
   artifacts:
     paths:
     - urls.txt
+    - domains.txt
     when: always
+
+
+port-scan:
+  stage: subdomains-prepare
+  extends: 
+    - .for_infra_scan
+  image: 
+    name: projectdiscovery/naabu:latest
+    entrypoint: [""]
+  needs:
+    - job: subdomains-search
+      artifacts: true
+  script:
+    - naabu -top-ports=1000 -c 50 -list domains.txt -scan-all-ips -stats -rate 1000 -o port_scan.txt
+  artifacts:
+    paths:
+    - port_scan.txt
+
+
+sort-web-only:
+  stage: subdomains-prepare
+  extends: 
+    - .for_infra_scan
+  image: 
+    name: projectdiscovery/httpx:latest
+    entrypoint: [""]
+  needs:
+    - job: port-scan
+      artifacts: true
+  script:
+    - httpx -list port_scan.txt -o urls.txt
+  artifacts:
+    paths:
+    - urls.txt
 
 
 subdomains-scan:
@@ -36,17 +67,21 @@ subdomains-scan:
   extends: 
     - .upload-report
     - .for_infra_scan
-    - .needs_subdomains_detect
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/nuclei:$SEC_NUCLEI_VER"
   variables:
     SCAN_TYPE: 'SARIF'
-    REPORT_FILE_NAME: 'report.sarif'
+    REPORT_FILE_NAME: 'report-nuclei.json'
     DD_GROUP_BY: 'component_name'
-    SEC_NUCLEI_TEMPLATES: '-t exposures -t exposed-panels'
+    SEC_NUCLEI_TEMPLATES: '-t cnvd,cves,takeovers,vulnerabilities,default-logins,fuzzing,iot,misconfiguration,exposures,exposed-panels'
   script:
-    - nuclei -l urls.txt -json -o $REPORT_FILE_NAME $SEC_NUCLEI_TEMPLATES || true
+    - nuclei -l urls.txt $SEC_NUCLEI_TEMPLATES -je $REPORT_FILE_NAME -eid ssl,robots-txt-endpoint,options-method,xss-deprecated-header,http-missing-security-headers,HTTP-TRACE,jupyter-notebook,robots-txt,wp-license-file,old-copyright,azure-domain-tenant,apple-app-site-association,ds-store-file,CVE-2020-9490,google-floc-disabled,addeventlistener-detect,email-extractor,web-config,request-based-interaction,request-based-interaction:dns,cors-misconfig
   rules:
     - if: '$SEC_INFRA_ENABLE == "true"'
+  needs: 
+    - job: init
+      artifacts: true
+    - job: sort-web-only
+      artifacts: true
   artifacts:
     paths:
     - $REPORT_FILE_NAME
