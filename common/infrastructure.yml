@@ -1,4 +1,6 @@
 .for_infra_scan:
+  rules:
+    - if: '$SEC_INFRA_ENABLE == "true"'
   extends:
     - .needs_init
     - .allow_failure
@@ -19,8 +21,6 @@ subdomains-search:
     - cat subdomains.txt | sort -u > domains.txt
     - sed 's/^/http\:\/\//' domains.txt > urls.txt
     - ls
-  rules:
-    - if: '$SEC_INFRA_ENABLE == "true"'
   artifacts:
     paths:
     - urls.txt
@@ -75,8 +75,6 @@ subdomains-scan:
     SEC_NUCLEI_TEMPLATES: '-t cnvd,cves,takeovers,vulnerabilities,default-logins,fuzzing,iot,misconfiguration,exposures,exposed-panels'
   script:
     - nuclei -l urls.txt $SEC_NUCLEI_TEMPLATES -je $REPORT_FILE_NAME -eid ssl,robots-txt-endpoint,options-method,xss-deprecated-header,http-missing-security-headers,HTTP-TRACE,jupyter-notebook,robots-txt,wp-license-file,old-copyright,azure-domain-tenant,apple-app-site-association,ds-store-file,CVE-2020-9490,google-floc-disabled,addeventlistener-detect,email-extractor,web-config,request-based-interaction,request-based-interaction:dns,cors-misconfig
-  rules:
-    - if: '$SEC_INFRA_ENABLE == "true"'
   needs: 
     - job: init
       artifacts: true

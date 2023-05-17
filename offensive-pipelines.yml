@@ -1,12 +1,5 @@
 stages: 
   - init                 # * To add engagement ot Deffect Dojo
-  - secrets-scan         # * To add secrets analysis
-  - code-scan            # * To add code analysis and SonarQube steps
-  - image-scan           # * To add dependencies check step
-  - web-dast                 # * To add DAST analyser
-  - api-tests-prepare    # * To add DAST based on QA tests
-  - api-tests-run        # * To add DAST based on QA tests
-  - sec-mobile           # * To add Mobsf security scan
   - subdomains-prepare   # * To add infrastructure security scan
   - subdomains-scan      # * To add infrastructure security scan
   - cleanup              # * To mark some vulnerabilities as False Positives & patch dependencies (TBD)
