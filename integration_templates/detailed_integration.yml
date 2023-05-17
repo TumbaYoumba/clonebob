@@ -43,10 +43,8 @@ security:
     SEC_IMAGE_REGISTRY_URL: ${CI_REGISTRY}
     SEC_IMAGE_REGISTRY_USER: ${CI_REGISTRY_USER}
     SEC_IMAGE_REGISTRY_PASS: ${CI_REGISTRY_PASSWORD}
-    SEC_IMAGE_REGISTRY_TOKEN: ${CI_BUILD_TOKEN}
-    IMAGE_TO_SCAN: "$CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_REF_NAME"
     SEC_TRIVY_MINIMUM_SEVERITY: 'HIGH,CRITICAL'
-    SEC_CLEANUP_ENABLE: "true" # To auto-collapse all reuirements vulnerabilities to one finding
+    SEC_CLEANUP_ENABLE: "true" # To auto-collapse all reuirements vulnerabilities to one finding in defectdojo
 
     # DAST settings
     SEC_DAST_URL_TO_SCAN: "https://example.com"
