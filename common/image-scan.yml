@@ -18,6 +18,11 @@ image-scan:trivy:
     SEC_IMAGE_TO_SCAN_NAME: "${CI_REGISTRY_IMAGE}"
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/trivy:$SEC_TRIVY_VER"
   script:
+    # if you don't want to run trivy as root, you may use the following script:
+    # - |
+    #   docker save  $SEC_IMAGE_TO_SCAN_NAME:$SEC_IMAGE_TO_SCAN_TAG -o myimage.tar
+    #   trivy image --input myimage.tar
+    # Otherwise you can pull&scan the image, but with root user
     - trivy image --output $REPORT_FILE_NAME --security-checks vuln --format json --severity $SEC_TRIVY_MINIMUM_SEVERITY $SEC_IMAGE_TO_SCAN_NAME:$SEC_IMAGE_TO_SCAN_TAG || true
   extends: 
     - .allow_failure
