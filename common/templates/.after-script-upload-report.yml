@@ -39,6 +39,7 @@
           -H "Authorization: Token $SEC_PORTAL_KEY"  \
           -F "file=@$REPORT_TO_UPLOAD" \
           -F "scanner_name=$SCAN_TYPE" \
+          -F "branch=$SEC_ISSUES_BRANCH" \
           -F "product_name=$CI_PROJECT_NAME" \
           -F "product_type=$CI_PROJECT_ROOT_NAMESPACE" || true
       fi

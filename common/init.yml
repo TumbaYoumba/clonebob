@@ -19,6 +19,7 @@ init:
       export SSH_PRIVATE=""
       ssh-keyscan -H gitlab.com >> ~/.ssh/known_hosts
       git clone $REPO_URL code && mv code/* . && rm -rf code
+      export SEC_ISSUES_BRANCH=$(git branch --show-current)
      fi
     - env
     - ls -la
@@ -29,10 +30,15 @@ init:
       set -xe
       env | grep "SEC_"
 
-      if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "" ]; then
-        export SEC_DEFECT_MANAGEMENT_SYSTEM="defectdojo"
+      if [ "$SEC_ISSUES_BRANCH" == "" ]; then
+        export SEC_ISSUES_BRANCH="$CI_COMMIT_BRANCH"
       fi
 
+      if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "" ]; then
+        export SEC_DEFECT_MANAGEMENT_SYSTEM="portal"
+      fi
+
+      echo "SEC_ISSUES_BRANCH=$SEC_ISSUES_BRANCH" >> variables.env
       echo "SEC_DEFECT_MANAGEMENT_SYSTEM=$SEC_DEFECT_MANAGEMENT_SYSTEM" >> variables.env
 
       if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "defectdojo" ]; then
@@ -132,7 +138,7 @@ init:
       cat variables.env
 
       else
-      echo "We don't need this outdated stuff for Whitespots portal. See everything you need in scanners after_script"
+      echo "We don't need this outdated stuff for Whitespots portal. Only to get the branch"
       fi
 
   artifacts:
