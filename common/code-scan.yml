@@ -98,7 +98,13 @@
     - exists:
       - '**/*.rb'
 
-
+.for_snyk:
+  stage: snyk-scan
+  rules:
+    - if: '$SEC_SNYK_ENABLE == "true"'
+  extends:
+    - .needs_init
+    - .tags
 
 # INFRA
 
@@ -350,4 +356,70 @@ dep-scan:trivy:
     paths:
       - $REPORT_FILE_NAME
     expire_in: 1 week
+
+snyk-go:
+  image: golang:1.14
+  script:
+    - go build -o binary
+    - curl -sL https://deb.nodesource.com/setup_10.x | bash -
+    - apt-get install nodejs
+    - npm install -g snyk
+    - npm install snyk-to-html -g
+    - snyk auth $SNYK_TOKEN
+    - snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
+    - snyk test --json | snyk-to-html -o snyk_results.html
+  extends:
+    - .for_snyk
+    - .golang_rules
+
+snyk-python:
+  image: python:3.8
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  before_script:
+    - python -V 
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - REQ_PATH=$(find . -name "requirements.txt")
+    - pip install -r $REQ_PATH
+  script:
+    - apt-get update -y
+    - apt-get install nodejs npm -y
+    - npm install -g snyk
+    - TARGET_PATH="${REQ_PATH%/*}"
+    - cd $TARGET_PATH
+    - snyk auth $SNYK_TOKEN
+    - snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
+    - snyk test
+  extends:
+    - .for_snyk
+    - .python_rules
+
+snyk_iac:
+  image: python:3.8
+  script:
+    - apt-get update -y
+    - apt-get install nodejs npm -y
+    - npm install -g snyk
+    - snyk auth $SNYK_TOKEN
+    - snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
+    - snyk iac test --report --remote-repo-url=$CI_PROJECT_NAME 
+  extends:
+    - .for_snyk
+    - .iac_rules
+
+snyk-nodejs:
+  image: node:latest
+  script:
+    - npm install -g npm@latest
+    - npm install -g snyk
+    - npm install snyk-to-html -g
+    - snyk auth $SNYK_TOKEN
+    - snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
+    - snyk test --json | snyk-to-html -o snyk_results.html
+  extends:
+    - .for_snyk
+    - .js_rules
+
 
