@@ -97,15 +97,6 @@
     - if: '$SEC_RUBY == "true"'
     - exists:
       - '**/*.rb'
-
-.for_snyk:
-  stage: snyk-scan
-  rules:
-    - if: '$SEC_SNYK_ENABLE == "true"'
-  extends:
-    - .needs_init
-    - .tags
-
 # INFRA
 
 scan:hadolint:
@@ -290,8 +281,6 @@ sast:py-js-go:codeql:
       - many_reports/
     expire_in: 1 week
 
-
-
 sast:grep:semgrep:
   variables:
     SCAN_TYPE: 'Semgrep JSON Report'
@@ -357,69 +346,99 @@ dep-scan:trivy:
       - $REPORT_FILE_NAME
     expire_in: 1 week
 
-snyk-go:
-  image: golang:1.14
+# Snyk scan
+
+snyk-scan:go:
+  variables:
+    SCAN_TYPE: 'Snyk Scan'
+    REPORT_FILE_NAME: 'snyk-go.json'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/snyk-go:$SEC_SNYK_VER"
   script:
     - go build -o binary
-    - curl -sL https://deb.nodesource.com/setup_10.x | bash -
-    - apt-get install nodejs
-    - npm install -g snyk
-    - npm install snyk-to-html -g
-    - snyk auth $SNYK_TOKEN
-    - snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
-    - snyk test --json | snyk-to-html -o snyk_results.html
+    - |
+      if [[ ! -z "$SNYK_TOKEN" ]]; then
+        snyk auth $SNYK_TOKEN
+        snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
+      fi
+    - snyk test --json > $REPORT_FILE_NAME 
+    - ls -la
   extends:
-    - .for_snyk
+    - .for_code_scan
     - .golang_rules
+  artifacts:
+    paths:
+      - $REPORT_FILE_NAME
+    expire_in: 1 week
 
-snyk-python:
-  image: python:3.8
+snyk-scan:python:
   variables:
+    SCAN_TYPE: 'Snyk Scan'
+    REPORT_FILE_NAME: 'snyk-python.json'
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/snyk-python:$SEC_SNYK_VER"
   before_script:
     - python -V 
+    - pip install --upgrade pip
     - pip install virtualenv
+    - export PATH="$PATH:/home/whitespots/.local/bin"
     - virtualenv venv
     - source venv/bin/activate
     - REQ_PATH=$(find . -name "requirements.txt")
     - pip install -r $REQ_PATH
   script:
-    - apt-get update -y
-    - apt-get install nodejs npm -y
-    - npm install -g snyk
     - TARGET_PATH="${REQ_PATH%/*}"
     - cd $TARGET_PATH
-    - snyk auth $SNYK_TOKEN
-    - snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
-    - snyk test
+    - |
+      if [[ ! -z "$SNYK_TOKEN" ]]; then
+        snyk auth $SNYK_TOKEN
+        snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
+      fi
+    - snyk test --json > $REPORT_FILE_NAME
+    - ls -la
   extends:
-    - .for_snyk
+    - .for_code_scan
     - .python_rules
+  artifacts:
+    paths:
+      - $REPORT_FILE_NAME
+    expire_in: 1 week
 
-snyk_iac:
-  image: python:3.8
+snyk-scan:iac:
+  variables:
+    SCAN_TYPE: 'Snyk Scan'
+    REPORT_FILE_NAME: 'snyk-iac.json'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/snyk-node:$SEC_SNYK_VER"
   script:
-    - apt-get update -y
-    - apt-get install nodejs npm -y
-    - npm install -g snyk
-    - snyk auth $SNYK_TOKEN
-    - snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
-    - snyk iac test --report --remote-repo-url=$CI_PROJECT_NAME 
+    - |
+      if [[ ! -z "$SNYK_TOKEN" ]]; then
+        snyk auth $SNYK_TOKEN
+        snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
+      fi
+    - snyk iac test --report --remote-repo-url=$CI_PROJECT_NAME --json > $REPORT_FILE_NAME
+    - ls -la
   extends:
-    - .for_snyk
+    - .for_code_scan
     - .iac_rules
 
-snyk-nodejs:
-  image: node:latest
+snyk-scan:nodejs:
+  variables:
+    SCAN_TYPE: 'Snyk Scan'
+    REPORT_FILE_NAME: 'snyk-nodejs.json'
+  image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/snyk-node:$SEC_SNYK_VER"
   script:
-    - npm install -g npm@latest
-    - npm install -g snyk
-    - npm install snyk-to-html -g
-    - snyk auth $SNYK_TOKEN
-    - snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
-    - snyk test --json | snyk-to-html -o snyk_results.html
+    - |
+      if [[ ! -z "$SNYK_TOKEN" ]]; then
+        snyk auth $SNYK_TOKEN
+        snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
+      fi
+    - snyk test --json > $REPORT_FILE_NAME
+    - ls -la
   extends:
-    - .for_snyk
+    - .for_code_scan
     - .js_rules
+  artifacts:
+    paths:
+      - $REPORT_FILE_NAME
+    expire_in: 1 week
 
 
