@@ -56,6 +56,6 @@ variables:
     # SEC_MOBILE_MOBSF_TOKEN: 
 # INFRA
     SEC_SUBFINDER_VER: "2.5.2"
-    SEC_NAABU_VER: "2.1.6"
+    SEC_NAABU_VER: "2.1.9"
     SEC_HTTPX_VER: "1.3.3"
     SEC_NUCLEI_VER: "2.9.9"
