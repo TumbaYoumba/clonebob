@@ -12,8 +12,8 @@ web-dast:arachni:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/arachni:$SEC_ARACHNI_VER"
   script:
     - echo "Scanning service with ${CI_REGISTRY_IMAGE}"
-    - arachni --output-verbose --scope-include-subdomains $SEC_DAST_URL_TO_SCAN $SEC_ARACHNI_ADDITIONAL_FLAGS --report-save-path=arachni.afr
-    # arachni_rpc --dispatcher-url arachni-dispatcher:2222 --scope-include-subdomains --report-save-path=arachni.afr $SEC_DAST_URL_TO_SCAN
+    - arachni --output-verbose --scope-include-subdomains $SEC_INFRA_DOMAIN $SEC_ARACHNI_ADDITIONAL_FLAGS --report-save-path=arachni.afr
+    # arachni_rpc --dispatcher-url arachni-dispatcher:2222 --scope-include-subdomains --report-save-path=arachni.afr $SEC_INFRA_DOMAIN
     - arachni_reporter arachni.afr --reporter=json:outfile=$REPORT_FILE_NAME || true
   extends: 
     - .allow_failure
@@ -75,7 +75,7 @@ api-tests-run:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/zap:$SEC_ZAP_VER"
   variables:
       ZAP_API_KEY: "$ZAP_API_KEY"
-      HOST_PATTERN: "$SEC_DAST_URL_TO_SCAN"
+      HOST_PATTERN: "$SEC_INFRA_DOMAIN"
       SCAN_URL_SCHEME: "http"
       QA_AUTOTESTS_NAME: "main"
       QA_AUTOTESTS_PROXY_FOR_DEBUG: "zap 8080"
