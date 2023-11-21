@@ -355,11 +355,8 @@ snyk-scan:go:
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/snyk-go:$SEC_SNYK_VER"
   script:
     - go build -o binary
-    - |
-      if [[ ! -z "$SNYK_TOKEN" ]]; then
-        snyk auth $SNYK_TOKEN
-        snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
-      fi
+    - snyk auth $SNYK_TOKEN
+    - snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
     - snyk test --json > $REPORT_FILE_NAME 
     - ls -la
   extends:
@@ -380,21 +377,15 @@ snyk-scan:python:
     - python -V 
     - pip install --upgrade pip
     - pip install virtualenv
-    - export PATH="$PATH:/home/whitespots/.local/bin"
-    - virtualenv venv
-    - source venv/bin/activate
+    - python3 -m venv .venv
+    - . .venv/bin/activate 
     - REQ_PATH=$(find . -name "requirements.txt")
     - pip install -r $REQ_PATH
   script:
     - TARGET_PATH="${REQ_PATH%/*}"
     - cd $TARGET_PATH
-    - |
-      if [[ ! -z "$SNYK_TOKEN" ]]; then
-        snyk auth $SNYK_TOKEN
-        snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
-      fi
+    - snyk auth $SNYK_TOKEN
     - snyk test --json > $REPORT_FILE_NAME
-    - ls -la
   extends:
     - .for_code_scan
     - .python_rules
@@ -409,13 +400,8 @@ snyk-scan:iac:
     REPORT_FILE_NAME: 'snyk-iac.json'
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/snyk-node:$SEC_SNYK_VER"
   script:
-    - |
-      if [[ ! -z "$SNYK_TOKEN" ]]; then
-        snyk auth $SNYK_TOKEN
-        snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
-      fi
+    - snyk auth $SNYK_TOKEN
     - snyk iac test --report --remote-repo-url=$CI_PROJECT_NAME --json > $REPORT_FILE_NAME
-    - ls -la
   extends:
     - .for_code_scan
     - .iac_rules
@@ -426,11 +412,8 @@ snyk-scan:nodejs:
     REPORT_FILE_NAME: 'snyk-nodejs.json'
   image: "$CI_REGISTRY/$SEC_PATH_TO_IMAGES/snyk-node:$SEC_SNYK_VER"
   script:
-    - |
-      if [[ ! -z "$SNYK_TOKEN" ]]; then
-        snyk auth $SNYK_TOKEN
-        snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
-      fi
+    - snyk auth $SNYK_TOKEN
+    - snyk monitor --remote-repo-url=$CI_PROJECT_NAME --org=$SNYK_ORG_ID
     - snyk test --json > $REPORT_FILE_NAME
     - ls -la
   extends:
