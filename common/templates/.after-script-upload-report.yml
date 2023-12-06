@@ -1,10 +1,11 @@
-
 .upload-report:
   after_script:
     - |
       set -x
       echo "Uploading report with /.after-script-template-upload-report.yml"
       ls -la
+      
+      REPO_URL=$(echo "$CI_REPOSITORY_URL" | sed 's/^https:\/\/gitlab-ci-token:[^@]*@//; s/^\(.*\/\)\(.*\)\.git$/git@gitlab.com:\1\2.git/')
       export $(xargs < variables.env)
 
       readlink -f $REPORT_FILE_NAME > report.list
@@ -40,6 +41,7 @@
           -F "file=@$REPORT_TO_UPLOAD" \
           -F "scanner_name=$SCAN_TYPE" \
           -F "branch=$SEC_ISSUES_BRANCH" \
+          -F "repository=$REPO_URL" \
           -F "product_name=$CI_PROJECT_NAME" \
           -F "product_type=$CI_PROJECT_ROOT_NAMESPACE" || true
       fi
