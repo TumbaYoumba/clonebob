@@ -59,6 +59,7 @@ variables:
     SEC_NAABU_VER: "2.1.9"
     SEC_HTTPX_VER: "1.3.3"
     SEC_NUCLEI_VER: "2.9.9"
+    SEC_PROWLER_VER: "3.11.3"
 
 #GITLAB
     SEC_GITLAB_SEMGREP_VER: "4"
