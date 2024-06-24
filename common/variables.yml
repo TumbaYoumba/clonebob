@@ -29,7 +29,7 @@ variables:
     SEC_PHPCS_VER: "2.0.1"
     SEC_GOSEC_VER: "2.20.0" 
     SEC_RETIREJS_VER: "4.3.1"
-    SEC_ESLINT_VER: "8.42.0"
+    SEC_ESLINT_VER: "9.5.0" # Bump from "8.42.0"
     SEC_BRAKEMAN_VER: "6.0.0"
     SEC_SEMGREP_VER: "1.74.0" 
     SEC_SPOTBUGS_VER: "5.0.0"
