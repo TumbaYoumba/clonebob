@@ -1,0 +1,44 @@
+stages: 
+  - get-security-issues
+
+.tags:
+  tags:
+    - gitlab-org
+
+get-security-issues:
+  stage: get-security-issues
+  image: registry.gitlab.com/whitespots-public/security-images/toolset:latest
+  script:
+    - |
+      set -e
+      env | grep "REPOSITORY"
+      echo "Getting security issues from portal by repository ssh url"
+      
+      CI_REPOSITORY_URL_SSH=$(echo "$CI_REPOSITORY_URL" | sed -E 's|https://[^/]+@|git@|' | sed -E 's|/|:|' | sed 's|https://||')
+
+      echo "CI_REPOSITORY_URL_SSH=$CI_REPOSITORY_URL_SSH"
+      echo "SEC_PORTAL_URL=$SEC_PORTAL_URL"
+      echo "First, we need to search this asset in portal"
+     
+      FINDINGS_COUNT=0
+
+      FINDINGS_COUNT=$(curl --insecure "$SEC_PORTAL_URL/api/v1/findings/?repository__icontains=$CI_REPOSITORY_URL_SSH" \
+      -H "Authorization: Token $SEC_PORTAL_KEY" | jq '.count')
+
+      echo "FINDINGS_COUNT=$FINDINGS_COUNT"
+
+      if [ "$FINDINGS_COUNT" == "null" ]; then
+        echo "There's a problem with getting issues from security portal"
+        exit 0
+      fi
+
+      # Last condition 
+
+      if [ "$FINDINGS_COUNT" > 0 ]; then
+        echo "There are security issues discovered for your repository. Please fix them first"
+        exit 1
+      fi
+
+      
+  extends: 
+    - .tags
