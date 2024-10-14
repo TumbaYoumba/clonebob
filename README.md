@@ -2,11 +2,17 @@
 
 [[_TOC_]]
 
+# SUPPORT DISCLAIMER
+
+You can use this framework, but keep in mind, that we don't offer any support for it. 
+If you want to automate your scans, please use https://whitespots.io platform with our Auditor CI
+
+
 # Setup
 
 ## Pipelines usage without clonning
 
-1. Set `SEC_DD_KEY`, `SEC_DD_URL` and `SEC_MOBILE_MOBSF_URL` (if you want to use an external mobsf) in the GitLab group where your repositories are placed. 
+1. Set `SEC_PORTAL_KEY`, `SEC_PORTAL_URL` and `SEC_MOBILE_MOBSF_URL` (if you want to use an external mobsf) in the GitLab group where your repositories are placed. 
 (get this token from your DefectDojo instance)
 2. Now you are ready to trigger our pipelines. See next
 
@@ -17,11 +23,11 @@
 1. Make a shared group in your corporate gitlab
 2. Create a project in that group (`pipelines` here)
 3. Git push this content to your project
-4. Edit `common/variables.yml` file with proper urls in `SEC_DD_URL` and `SEC_MOBILE_MOBSF_URL` (if you want to use an external mobsf). 
+4. Edit `common/variables.yml` file with proper urls in `SEC_PORTAL_URL` and `SEC_MOBILE_MOBSF_URL` (if you want to use an external mobsf). 
 5. You need to edit the `SEC_PATH_TO_IMAGES` variable in `common/variables.yml` (it's just a project path to security images project).
 6. And the same value should be written in `pipelines.yml` file to set `.image` include directive properly (We will remove this step later)
 (image: `$CI_REGISTRY/whitespots-public/security-images/toolset:latest`)
-7. Set `SEC_DD_KEY` in your project group. (get this token from your DefectDojo instance)
+7. Set `SEC_PORTAL_KEY` in your project group. (get this token from your DefectDojo instance)
 8. Now you can use the following example:
 
 ### Adding new scanners
