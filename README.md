@@ -1,14 +1,20 @@
-[![Video guide](https://img.youtube.com/vi/DLN1kNh_Ha0/0.jpg)](https://www.youtube.com/watch?v=DLN1kNh_Ha0 "Video guide")
-
-[[_TOC_]]
 
 # SUPPORT DISCLAIMER
 
-You can use this framework, but keep in mind, that we don't offer any support for it. 
-If you want to automate your scans, please use https://whitespots.io platform with our Auditor CI
+**You can use this framework, but keep in mind, that we don't offer any support for it. If you want to automate your scans, please use https://whitespots.io platform with our Auditor CI**
+
+## [Whitespots portal](https://gitlab.com/whitespots-public/appsec-portal)
+
+## [Auditor CI](https://gitlab.com/whitespots-public/auditor)
+
+
+[[_TOC_]]
 
 
 # Setup
+
+[![Video guide](https://img.youtube.com/vi/DLN1kNh_Ha0/0.jpg)](https://www.youtube.com/watch?v=DLN1kNh_Ha0 "Video guide")
+
 
 ## Pipelines usage without clonning
 
