@@ -42,12 +42,17 @@ init:
       echo "SEC_DEFECT_MANAGEMENT_SYSTEM=$SEC_DEFECT_MANAGEMENT_SYSTEM" >> variables.env
       
       if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "portal" ]; then
+
+        CI_REPOSITORY_URL_SSH=$(echo "$CI_REPOSITORY_URL" | sed -E 's|https://[^/]+@|git@|' | sed -E 's|/|:|' | sed 's|https://||')
+
+
         AUDIT_ID=$(curl -s --insecure -XPOST "$SEC_PORTAL_URL/api/v1/audit/" \
             -H "Content-Type: application/json" \
             -H "Authorization: Token $SEC_PORTAL_KEY"  \
             -d "" | jq '.id')
 
         echo "AUDIT_ID=$AUDIT_ID" >> variables.env
+        echo "CI_REPOSITORY_URL_SSH=$CI_REPOSITORY_URL_SSH" >> variables.env
       fi
 
       if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "defectdojo" ]; then
