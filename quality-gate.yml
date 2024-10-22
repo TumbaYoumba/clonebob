@@ -1,12 +1,5 @@
-stages: 
-  - get-security-issues
 
-.tags:
-  tags:
-    - gitlab-org
-
-get-security-issues:
-  stage: get-security-issues
+.quality-gate:
   image: registry.gitlab.com/whitespots-public/security-images/toolset:latest
   script:
     - |
@@ -34,11 +27,8 @@ get-security-issues:
 
       # Last condition 
 
-      if [ "$FINDINGS_COUNT" > 0 ]; then
+      if [ "$FINDINGS_COUNT" -gt 0 ]; then
         echo "There are security issues discovered for your repository. Please fix them first"
         exit 1
       fi
 
-      
-  extends: 
-    - .tags
