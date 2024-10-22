@@ -148,6 +148,45 @@ All listed examples contain `.gitlab-ci.yml` file, where you may see the integra
 - [K8S app](https://gitlab.com/whitespots-public/vulnerable-apps/vulnerable-k8s-app)
 
 
+# How to configure a Quality Gate
+
+```yml
+stages: 
+  - security-scan
+  - security-decision
+
+include:
+    - project: 'whitespots-public/pipelines'
+      # a proper branch name
+      ref: 'main'
+      file: 'quality-gate.yml' 
+
+security-scan:
+  stage: security-scan
+  allow_failure: true
+  trigger:
+    include:
+      - project: 'whitespots-public/pipelines'
+        # a proper branch name
+        ref: 'main'
+        file: 'pipelines.yml'
+    
+
+security-decision:
+  extends: 
+    - .quality-gate
+  stage: security-decision
+  allow_failure: false 
+  needs: [security-scan]
+  tags:
+    - gitlab-org
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_BRANCH == "prod"'
+
+```
+
+
 # Community contributors
 
 - @httpnotonly (Refactoring)
