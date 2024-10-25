@@ -12,12 +12,22 @@
       echo "CI_REPOSITORY_URL_SSH=$CI_REPOSITORY_URL_SSH"
       echo "SEC_PORTAL_URL=$SEC_PORTAL_URL"
       echo "First, we need to search this asset in portal"
-     
+
+      echo "**Security issues**" > output.md
       FINDINGS_COUNT=0
 
-      FINDINGS_COUNT=$(curl --insecure "$SEC_PORTAL_URL/api/v1/findings/?repository__icontains=$CI_REPOSITORY_URL_SSH" \
-      -H "Authorization: Token $SEC_PORTAL_KEY" | jq '.count')
+      # Constants for portal numeric mapping
+      INFO=0
+      LOW=1
+      MEDIUM=2
+      HIGH=3
+      CRITICAL=4
 
+      RESPONSE=$(curl --insecure "$SEC_PORTAL_URL/api/v1/findings/?repository__icontains=$CI_REPOSITORY_URL_SSH&&severity__in=$CRITICAL,$HIGH,$MEDIUM" \
+      -H "Authorization: Token $SEC_PORTAL_KEY")
+      echo $RESPONSE > response.json
+
+      FINDINGS_COUNT=$(cat response.json | jq '.count')
       echo "FINDINGS_COUNT=$FINDINGS_COUNT"
 
       if [ "$FINDINGS_COUNT" == "null" ]; then
@@ -28,7 +38,42 @@
       # Last condition 
 
       if [ "$FINDINGS_COUNT" -gt 0 ]; then
-        echo "There are security issues discovered for your repository. Please fix them first"
+        echo "There are security issues discovered for your repository. Please fix them first."
+        echo "Look for your code issues here: $SEC_PORTAL_URL/findings/?repository__icontains=$CI_REPOSITORY_URL_SSH&&severity__in=$CRITICAL,$HIGH,$MEDIUM"
+        
+        # Here we will save everything into a new file. Exit code is below
+        sed 's/\r//g' response.json > fixed_response.json
+        
+        echo "" >> output.md
+
+        jq -c '.results[]' fixed_response.json | while read -r issue; do
+
+            title=$(echo "$issue" | jq -r '.name')
+            echo "**Title:** $title" >> output.md
+            echo "" >> output.md
+
+            file_path=$(echo "$issue" | jq -r '.file_path')
+            line=$(echo "$issue" | jq -r '.line')
+            echo "**Location:** $file_path:$line" >> output.md
+            echo "" >> output.md
+
+            id=$(echo "$issue" | jq -r '.id')
+            echo "**Link:** $SEC_PORTAL_URL/findings/$id" >> output.md
+            echo "" >> output.md
+        done
+
+        rm fixed_response.json
+
+        # Finally exit with error
         exit 1
       fi
+
+
+
+      
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - output.md
+    when: always
 
