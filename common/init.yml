@@ -43,6 +43,12 @@ init:
       
       if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "portal" ]; then
 
+        # SET PRODUCT VARIABLE
+        if [ "$SEC_PORTAL_PRODUCT_NAME" == "" ]; then
+          # REMOVE COMMENT IF YOU NEED TO CREATE PRODUCTS PER REPOSITORY
+          # export product_name=$CI_PROJECT_NAME" 
+        fi
+        
         CI_REPOSITORY_URL_SSH=$(echo "$CI_REPOSITORY_URL" | sed -E 's|https://[^/]+@|git@|' | sed -E 's|/|:|' | sed 's|https://||')
 
 
@@ -53,6 +59,7 @@ init:
 
         echo "AUDIT_ID=$AUDIT_ID" >> variables.env
         echo "CI_REPOSITORY_URL_SSH=$CI_REPOSITORY_URL_SSH" >> variables.env
+        echo "SEC_PORTAL_PRODUCT_NAME=$SEC_PORTAL_PRODUCT_NAME" >> variables.env
       fi
 
       if [ "$SEC_DEFECT_MANAGEMENT_SYSTEM" == "defectdojo" ]; then

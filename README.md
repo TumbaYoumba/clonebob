@@ -89,6 +89,9 @@ security:
         file: 'pipelines.yml'
   variables:
 
+    # Product name (go to common/init.yml:L48-49 to change the product naming logic)
+    SEC_PORTAL_PRODUCT_NAME: "MyProduct"
+
     # Secrets settings
     SEC_SECRETS_SCAN_ENABLE: "true"
 

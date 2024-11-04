@@ -43,7 +43,7 @@
           -F "branch=$SEC_ISSUES_BRANCH" \
           -F "audit_id=$AUDIT_ID" \
           -F "repository=$CI_REPOSITORY_URL_SSH" \
-          -F "product_name=$CI_PROJECT_NAME" \
+          -F "product_name=$SEC_PORTAL_PRODUCT_NAME" \
           -F "product_type=$CI_PROJECT_ROOT_NAMESPACE" || true
       fi
 
