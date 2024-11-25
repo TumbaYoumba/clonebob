@@ -5,7 +5,7 @@
       echo "Uploading report with /.after-script-template-upload-report.yml"
       ls -la
       
-      REPO_URL==$(echo "$CI_PROJECT_URL" | sed 's/^https:\/\/gitlab.com\//git@gitlab.com:/' | sed 's/$/.git/')
+      CI_REPOSITORY_URL_SSH=$(echo "$CI_REPOSITORY_URL" | sed -E 's|https://[^/]+@|git@|' | sed -E 's|/|:|' | sed 's|https://||')
       export $(xargs < variables.env)
 
       readlink -f $REPORT_FILE_NAME > report.list
