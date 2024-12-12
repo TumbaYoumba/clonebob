@@ -31,7 +31,7 @@ variables:
     SEC_RETIREJS_VER: "4.3.1"
     SEC_ESLINT_VER: "9.5.0" # Bump from "8.42.0"
     SEC_BRAKEMAN_VER: "6.0.0"
-    SEC_SEMGREP_VER: "1.74.0" 
+    SEC_SEMGREP_VER: "1.99.0" 
     SEC_SPOTBUGS_VER: "5.0.0"
     SEC_SNYK_VER: "1.1233.0"
 # SONAR
